@@ -24,10 +24,12 @@ class InitImg(object):
     """OI image reconstruction initial image class.
 
     Args:
+      extname (str): Name of image, written as FITS EXTNAME keyword.
       naxis1 (int): First (fast) dimension of image (FITS ordering).
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
 
     Attributes:
+      extname (str): Name of image, written as FITS EXTNAME keyword.
       naxis1 (int): First (fast) dimension of image (FITS ordering).
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
       image (ndarray): The image pixel data as a numpy array
@@ -36,7 +38,9 @@ class InitImg(object):
     Examples:
       The following creates a blank 64 by 32 image:
 
-      >>> img = InitImg(64, 32)
+      >>> img = InitImg('test', 64, 32)
+      >>> img.extname
+      'test'
       >>> type(img.image) == np.ndarray
       True
       >>> img.naxis1
@@ -52,7 +56,8 @@ class InitImg(object):
 
     """
 
-    def __init__(self, naxis1, naxis2):
+    def __init__(self, extname, naxis1, naxis2):
+        self.extname = extname
         self.naxis1 = naxis1
         self.naxis2 = naxis2
         self.image = np.zeros((naxis2, naxis1), np.float) # axes are slow, fast
@@ -67,7 +72,7 @@ class InitImg(object):
 
         Example:
 
-        >>> img = InitImg(64, 64)
+        >>> img = InitImg('test', 64, 64)
         >>> img.setWCS(cdelt=[0.25 * MAS_TO_RAD, 0.25 * MAS_TO_RAD])
 
         """
@@ -84,7 +89,7 @@ class InitImg(object):
         Examples:
           The following uses this method to create a FITS image file:
 
-          >>> img = InitImg(64, 64)
+          >>> img = InitImg('test', 64, 64)
           >>> img.makePrimaryHDU().writeto('utest.fits')
           >>> hlist = fits.open('utest.fits')
           >>> np.all(hlist[0].data == img.image)
@@ -92,18 +97,22 @@ class InitImg(object):
           >>> os.remove('utest.fits')
 
         """
-        return fits.PrimaryHDU(data=self.image, header=self._wcs.to_header())
+        hdu = fits.PrimaryHDU(data=self.image, header=self._wcs.to_header())
+        hdu.header['EXTNAME'] = self.extname
+        return hdu
 
     def makeImageHDU(self):
         """Create a new ImageHDU instance from the current image."""
-        return fits.ImageHDU(data=self.image, header=self._wcs.to_header())
+        hdu = fits.ImageHDU(data=self.image, header=self._wcs.to_header())
+        hdu.header['EXTNAME'] = self.extname
+        return hdu
 
     def normalise(self):
         """Normalise the current image to unit sum.
 
         Example:
         
-        >>> img = InitImg(64, 64)
+        >>> img = InitImg('test', 64, 64)
         >>> img.addGaussian(12.0, 37.0, 0.5, 40)
         >>> img.normalise()
         >>> np.abs(np.sum(img.image) - 1.0) < 1e-6
@@ -123,7 +132,7 @@ class InitImg(object):
 
         Example:
 
-        >>> img = InitImg(64, 64)
+        >>> img = InitImg('test', 64, 64)
         >>> img.addGaussian(12.0, 37.0, 0.5, 5)
         >>> np.all(np.argmax(img.image, axis=1) == 12)
         True
