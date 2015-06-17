@@ -60,12 +60,12 @@ class InitImg(object):
         self.extname = extname
         self.naxis1 = naxis1
         self.naxis2 = naxis2
-        self.image = np.zeros((naxis2, naxis1), np.float) # axes are slow, fast
+        self.image = np.zeros((naxis2, naxis1), np.float)  # axes are slow,fast
         self._wcs = wcs.WCS(naxis=2)
 
     def setWCS(self, **kwargs):
         """Set World Coordinate System attributes.
-        
+
         Sets astropy.wcs.Wcsprm attributes supplied using
         kwargs. Important WCS attributes you might wish to set include
         cdelt, crpix, crval and cunit.
@@ -111,7 +111,7 @@ class InitImg(object):
         """Normalise the current image to unit sum.
 
         Example:
-        
+
         >>> img = InitImg('test', 64, 64)
         >>> img.addGaussian(12.0, 37.0, 0.5, 40)
         >>> img.normalise()
