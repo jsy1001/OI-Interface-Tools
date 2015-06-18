@@ -30,6 +30,9 @@ def create(args):
     # Create initial image
     img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
     img.setWCS(cdelt=[args.cdelt1 * MAS_TO_RAD, args.cdelt1 * MAS_TO_RAD])
+    if args.modeltype == 'gaussian':
+        img.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
+                        args.modelwidth / args.cdelt1)
 
     # Create input parameters with defaults
     inputParam = fits.Header()
@@ -157,7 +160,11 @@ def create_parser():
                                help='Image dimension (naxis2 == naxis1)')
     parser_create.add_argument('cdelt1', type=float,
                                help='Pixel size /mas (cdelt2 == cdelt1)')
-    # :TODO: add initial image type and parameters?
+    parser_create.add_argument('-mt', '--modeltype', default='blank',
+                               choices=['blank', 'gaussian'],
+                               help='Image model type')
+    parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
+                               help='Image model width /mas')
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
                                help='Initial parameter e.g. MAXITER=200')
     parser_create.set_defaults(func=create)
