@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 
+from __future__ import division, print_function
+
 import argparse
 import sys
 import os.path
@@ -97,11 +99,11 @@ def edit(args):
 
 def show_hdu(hdu):
     """List parameters from hdu."""
-    print '=== %s ===' % hdu.header['EXTNAME']
+    print('=== %s ===' % hdu.header['EXTNAME'])
     for p in hdu.header:
         if p not in RESERVED_KEYWORDS:
-            print '%-8s = %s' % (p, hdu.header[p])
-    print '---'
+            print('%-8s = %s' % (p, hdu.header[p]))
+    print('---')
 
 
 def show(args):
@@ -113,11 +115,11 @@ def show(args):
             try:
                 show_hdu(hdulist[INPUT_PARAM_NAME])
             except KeyError:
-                print "(No '%s' HDU)" % INPUT_PARAM_NAME
+                print("(No '%s' HDU)" % INPUT_PARAM_NAME)
             try:
                 show_hdu(hdulist[OUTPUT_PARAM_NAME])
             except KeyError:
-                print "(No '%s' HDU)" % OUTPUT_PARAM_NAME
+                print("(No '%s' HDU)" % OUTPUT_PARAM_NAME)
 
     except IOError, msg:
         sys.exit(msg)
