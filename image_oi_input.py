@@ -45,7 +45,7 @@ def create(args):
     # Write FITS file
     hdulist = fits.HDUList(hdus=[img.makePrimaryHDU(),
                                  fits.BinTableHDU(header=inputParam)])
-    hdulist.writeto(args.inputfile)
+    hdulist.writeto(args.inputfile, clobber=args.overwrite)
 
 
 def copyimage(args):
