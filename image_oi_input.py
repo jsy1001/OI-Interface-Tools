@@ -4,15 +4,17 @@ import argparse
 import sys
 import os.path
 
-import astropy.io.fits as fits
+from astropy.io import fits
 
 from InitImg import InitImg
+from HDUListPlus import HDUListPlus
 
-INIT_IMG_EXTNAME = 'IMAGE-OI INITIAL IMAGE'
-INPUT_PARAM_EXTNAME = 'IMAGE-OI INPUT PARAM'
-OUTPUT_PARAM_EXTNAME = 'IMAGE-OI OUTPUT PARAM'
+INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
+INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
+OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
 RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
-                     'PCOUNT', 'GCOUNT', 'TFIELDS', 'EXTNAME', 'EXTVER']
+                     'PCOUNT', 'GCOUNT', 'TFIELDS',
+                     'EXTNAME', 'EXTVER', 'HDUNAME', 'HDUVER']
 # :TODO: ordered dict
 DEFAULT_PARAM = {'WAVE_MIN': 0.1e-6, 'WAVE_MAX': 50e-6,
                  'USE_VIS': True, 'USE_VIS2': True, 'USE_T3': True,
@@ -25,12 +27,12 @@ def create(args):
         sys.exit("Not creating '%s' as it already exists." % args.inputfile)
 
     # Create initial image
-    img = InitImg(INIT_IMG_EXTNAME, args.naxis1, args.naxis1)
+    img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
 
     # Create input parameters with defaults
     inputParam = fits.Header()
-    inputParam['EXTNAME'] = INPUT_PARAM_EXTNAME
-    inputParam['INIT_IMG'] = INIT_IMG_EXTNAME  # :TODO:
+    inputParam['EXTNAME'] = INPUT_PARAM_NAME
+    inputParam['INIT_IMG'] = INIT_IMG_NAME
     for key in DEFAULT_PARAM.keys():
         inputParam[key] = DEFAULT_PARAM[key]
 
@@ -53,13 +55,14 @@ def copyimage(args):
              fits.open(args.inputfile) as destHduList:
 
             # Find source and destination image HDUs
+            destHduList.__class__ = HDUListPlus
             try:
-                sourceParam = sourceHduList[INPUT_PARAM_EXTNAME].header
+                sourceParam = sourceHduList[INPUT_PARAM_NAME].header
                 sourceImageHdu = sourceHduList[sourceParam['INIT_IMG']]
             except KeyError:
                 # Fallback to primary HDU
                 sourceImageHdu = destHduList[0]
-            destParam = destHduList[INPUT_PARAM_EXTNAME].header
+            destParam = destHduList[INPUT_PARAM_NAME].header
             destImageHdu = destHduList[destParam['INIT_IMG']]
 
             # Check dimensions match
@@ -80,10 +83,10 @@ def edit(args):
     try:
         with fits.open(args.inputfile) as hdulist:
             try:
-                inputParam = hdulist[INPUT_PARAM_EXTNAME].header
+                inputParam = hdulist[INPUT_PARAM_NAME].header
             except KeyError:
                 sys.exit("Specified file '%s' has no '%s' HDU to edit." %
-                         (args.inputfile, INPUT_PARAM_EXTNAME))
+                         (args.inputfile, INPUT_PARAM_NAME))
             for key, value in args.param:
                 inputParam[key] = value
             hdulist.writeto(args.inputfile, clobber=True)
@@ -108,13 +111,13 @@ def show(args):
     try:
         with fits.open(args.inputfile) as hdulist:
             try:
-                show_hdu(hdulist[INPUT_PARAM_EXTNAME])
+                show_hdu(hdulist[INPUT_PARAM_NAME])
             except KeyError:
-                print "(No '%s' HDU)" % INPUT_PARAM_EXTNAME
+                print "(No '%s' HDU)" % INPUT_PARAM_NAME
             try:
-                show_hdu(hdulist[OUTPUT_PARAM_EXTNAME])
+                show_hdu(hdulist[OUTPUT_PARAM_NAME])
             except KeyError:
-                print "(No '%s' HDU)" % OUTPUT_PARAM_EXTNAME
+                print "(No '%s' HDU)" % OUTPUT_PARAM_NAME
 
     except IOError, msg:
         sys.exit(msg)

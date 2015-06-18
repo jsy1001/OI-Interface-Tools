@@ -13,7 +13,7 @@ from math import pi, exp, log
 import os
 
 import numpy as np
-import astropy.io.fits as fits
+from astropy.io import fits
 from astropy import wcs
 
 MAS_TO_RAD = pi/180/3600/1000
@@ -24,12 +24,12 @@ class InitImg(object):
     """OI image reconstruction initial image class.
 
     Args:
-      extname (str): Name of image, written as FITS EXTNAME keyword.
+      name (str): Name of image, written as FITS HDUNAME keyword.
       naxis1 (int): First (fast) dimension of image (FITS ordering).
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
 
     Attributes:
-      extname (str): Name of image, written as FITS EXTNAME keyword.
+      name (str): Name of image, written as FITS HDUNAME keyword.
       naxis1 (int): First (fast) dimension of image (FITS ordering).
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
       image (ndarray): The image pixel data as a numpy array
@@ -39,7 +39,7 @@ class InitImg(object):
       The following creates a blank 64 by 32 image:
 
       >>> img = InitImg('test', 64, 32)
-      >>> img.extname
+      >>> img.name
       'test'
       >>> type(img.image) == np.ndarray
       True
@@ -56,8 +56,8 @@ class InitImg(object):
 
     """
 
-    def __init__(self, extname, naxis1, naxis2):
-        self.extname = extname
+    def __init__(self, name, naxis1, naxis2):
+        self.name = name
         self.naxis1 = naxis1
         self.naxis2 = naxis2
         self.image = np.zeros((naxis2, naxis1), np.float)  # axes are slow,fast
@@ -98,13 +98,15 @@ class InitImg(object):
 
         """
         hdu = fits.PrimaryHDU(data=self.image, header=self._wcs.to_header())
-        hdu.header['EXTNAME'] = self.extname
+        hdu.header['HDUNAME'] = self.name
+        # EXTNAME not allowed in primary header
         return hdu
 
     def makeImageHDU(self):
         """Create a new ImageHDU instance from the current image."""
         hdu = fits.ImageHDU(data=self.image, header=self._wcs.to_header())
-        hdu.header['EXTNAME'] = self.extname
+        hdu.header['HDUNAME'] = self.name
+        hdu.header['EXTNAME'] = self.name
         return hdu
 
     def normalise(self):

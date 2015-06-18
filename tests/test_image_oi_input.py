@@ -3,10 +3,11 @@ import os
 import tempfile
 
 import numpy as np
-import astropy.io.fits as fits
+from astropy.io import fits
 
 from InitImg import MAS_TO_RAD
-from image_oi_input import create_parser, INPUT_PARAM_EXTNAME, DEFAULT_PARAM
+from HDUListPlus import HDUListPlus
+from image_oi_input import create_parser, INPUT_PARAM_NAME, DEFAULT_PARAM
 
 
 class ImageOiInputTestCase(unittest.TestCase):
@@ -44,7 +45,8 @@ class ImageOiInputTestCase(unittest.TestCase):
                                        str(naxis1), str(cdelt1), 'MAXITER=50'])
         args.func(args)
         with fits.open(self.tempResult.name) as hdulist:
-            param = hdulist[INPUT_PARAM_EXTNAME].header
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[INPUT_PARAM_NAME].header
             imageHdu = hdulist[param['INIT_IMG']]
             self.assertEqual(param['NAXIS'], 2)
             self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
@@ -88,7 +90,7 @@ class ImageOiInputTestCase(unittest.TestCase):
                                        'MYKEY1=0.467', 'MYKEY2=foo'])
         args.func(args)
         with fits.open(self.tempResult.name) as hdulist:
-            param = hdulist[INPUT_PARAM_EXTNAME].header
+            param = hdulist[INPUT_PARAM_NAME].header
             self.assertAlmostEqual(param['MYKEY1'], 0.467)
             self.assertEqual(param['MYKEY2'], 'foo')
 
