@@ -29,7 +29,8 @@ def create(args):
 
     # Create initial image
     img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
-    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_RAD, args.cdelt1 * MAS_TO_RAD])
+    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_RAD, args.cdelt1 * MAS_TO_RAD],
+               ctype=['RA', 'DEC'])
     if args.modeltype == 'gaussian':
         img.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
                         args.modelwidth / args.cdelt1)
