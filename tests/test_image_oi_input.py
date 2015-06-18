@@ -51,10 +51,10 @@ class ImageOiInputTestCase(unittest.TestCase):
             self.assertEqual(param['NAXIS'], 2)
             self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
             self.assertEqual(imageHdu.header['NAXIS2'], naxis1)
-            #self.assertAlmostEqual(imageHdu.header['CDELT1'],
-            #                       cdelt1 * MAS_TO_RAD)
-            #self.assertAlmostEqual(imageHdu.header['CDELT2'],
-            #                       cdelt1 * MAS_TO_RAD)
+            self.assertAlmostEqual(imageHdu.header['CDELT1'],
+                                   cdelt1 * MAS_TO_RAD)
+            self.assertAlmostEqual(imageHdu.header['CDELT2'],
+                                   cdelt1 * MAS_TO_RAD)
             for key, value in DEFAULT_PARAM:
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)

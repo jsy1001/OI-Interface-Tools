@@ -6,7 +6,7 @@ import os.path
 
 from astropy.io import fits
 
-from InitImg import InitImg
+from InitImg import InitImg, MAS_TO_RAD
 from HDUListPlus import HDUListPlus
 
 INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
@@ -27,6 +27,7 @@ def create(args):
 
     # Create initial image
     img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
+    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_RAD, args.cdelt1 * MAS_TO_RAD])
 
     # Create input parameters with defaults
     inputParam = fits.Header()
