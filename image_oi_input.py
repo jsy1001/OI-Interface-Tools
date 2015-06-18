@@ -15,10 +15,9 @@ OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
 RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
                      'PCOUNT', 'GCOUNT', 'TFIELDS',
                      'EXTNAME', 'EXTVER', 'HDUNAME', 'HDUVER']
-# :TODO: ordered dict
-DEFAULT_PARAM = {'WAVE_MIN': 0.1e-6, 'WAVE_MAX': 50e-6,
-                 'USE_VIS': True, 'USE_VIS2': True, 'USE_T3': True,
-                 'MAXITER': 200, 'RGL_NAME': 'mem_prior', 'RGL_WGT': 1e5}
+DEFAULT_PARAM = [('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
+                 ('USE_VIS', True), ('USE_VIS2', True), ('USE_T3', True),
+                 ('MAXITER', 200), ('RGL_NAME', 'mem_prior'), ('RGL_WGT', 1e5)]
 
 
 def create(args):
@@ -33,8 +32,8 @@ def create(args):
     inputParam = fits.Header()
     inputParam['EXTNAME'] = INPUT_PARAM_NAME
     inputParam['INIT_IMG'] = INIT_IMG_NAME
-    for key in DEFAULT_PARAM.keys():
-        inputParam[key] = DEFAULT_PARAM[key]
+    for key, value in DEFAULT_PARAM:
+        inputParam[key] = value
 
     # Overwrite user-specified parameters
     for key, value in args.param:

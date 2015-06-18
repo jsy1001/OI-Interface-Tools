@@ -55,7 +55,7 @@ class ImageOiInputTestCase(unittest.TestCase):
             #                       cdelt1 * MAS_TO_RAD)
             #self.assertAlmostEqual(imageHdu.header['CDELT2'],
             #                       cdelt1 * MAS_TO_RAD)
-            for key in DEFAULT_PARAM.keys():
+            for key, value in DEFAULT_PARAM:
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)
 
