@@ -5,7 +5,7 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from InitImg import MAS_TO_RAD
+from InitImg import MAS_TO_DEG
 from HDUListPlus import HDUListPlus
 from image_oi_input import create_parser, INPUT_PARAM_NAME, DEFAULT_PARAM
 
@@ -16,6 +16,7 @@ class ImageOiInputTestCase(unittest.TestCase):
         self.parser = create_parser()
         self.tempResult = tempfile.NamedTemporaryFile(suffix='.fits',
                                                       delete=False)
+        self.datafile = 'tests/Bin_Ary--MIRC_H.fits'
 
     def tearDown(self):
         self.tempResult.close()
@@ -23,7 +24,8 @@ class ImageOiInputTestCase(unittest.TestCase):
 
     def create(self, inputfile, naxis1=64, cdelt1=0.25, param=[]):
         """Create a temporary input file to read as part of a test"""
-        args = self.parser.parse_args(['create', '--overwrite', inputfile,
+        args = self.parser.parse_args(['create', '--overwrite',
+                                       self.datafile, inputfile,
                                        str(naxis1), str(cdelt1)] + param)
         args.func(args)
 
@@ -31,7 +33,8 @@ class ImageOiInputTestCase(unittest.TestCase):
         """
         File exists and --overwrite not specified, should fail with SystemExit
         """
-        args = self.parser.parse_args(['create', self.tempResult.name,
+        args = self.parser.parse_args(['create',
+                                       self.datafile, self.tempResult.name,
                                        '128', '0.5'])
         with self.assertRaises(SystemExit):
             args.func(args)
@@ -41,7 +44,7 @@ class ImageOiInputTestCase(unittest.TestCase):
         naxis1 = 128
         cdelt1 = 0.5
         args = self.parser.parse_args(['create', '--overwrite',
-                                       self.tempResult.name,
+                                       self.datafile, self.tempResult.name,
                                        str(naxis1), str(cdelt1), 'MAXITER=50'])
         args.func(args)
         with fits.open(self.tempResult.name) as hdulist:
@@ -52,9 +55,9 @@ class ImageOiInputTestCase(unittest.TestCase):
             self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
             self.assertEqual(imageHdu.header['NAXIS2'], naxis1)
             self.assertAlmostEqual(imageHdu.header['CDELT1'],
-                                   cdelt1 * MAS_TO_RAD)
+                                   cdelt1 * MAS_TO_DEG)
             self.assertAlmostEqual(imageHdu.header['CDELT2'],
-                                   cdelt1 * MAS_TO_RAD)
+                                   cdelt1 * MAS_TO_DEG)
             for key, value in DEFAULT_PARAM:
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)

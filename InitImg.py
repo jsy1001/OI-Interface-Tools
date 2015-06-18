@@ -3,7 +3,7 @@
 A grey initial image is represented by the InitImg class.
 
 Attributes:
-  MAS_TO_RAD (float): Conversion factor from milliarcseconds to radians.
+  MAS_TO_DEG (float): Conversion factor from milliarcseconds to degrees.
 
 """
 
@@ -16,7 +16,7 @@ import numpy as np
 from astropy.io import fits
 from astropy import wcs
 
-MAS_TO_RAD = pi/180/3600/1000
+MAS_TO_DEG = 1/3600/1000
 
 
 class InitImg(object):
@@ -73,7 +73,7 @@ class InitImg(object):
         Example:
 
         >>> img = InitImg('test', 64, 64)
-        >>> img.setWCS(cdelt=[0.25 * MAS_TO_RAD, 0.25 * MAS_TO_RAD])
+        >>> img.setWCS(cdelt=[0.25 * MAS_TO_DEG, 0.25 * MAS_TO_DEG])
 
         """
         for key, value in kwargs.iteritems():
