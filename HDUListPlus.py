@@ -26,4 +26,4 @@ class HDUListPlus(fits.HDUList):
                     pass
                 if name == index or (name, ver) == index:
                     return hdu
-            raise KeyError
+            raise KeyError, "HDU '%s' not found." % name
