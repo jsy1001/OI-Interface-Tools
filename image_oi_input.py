@@ -6,6 +6,7 @@ import argparse
 import sys
 import os.path
 
+import numpy as np
 from astropy.io import fits
 
 from InitImg import InitImg, MAS_TO_DEG
@@ -78,8 +79,12 @@ def copyimage(args):
                 sys.exit("Image dimensions %s do not match destination %s" %
                          (sourceImageHdu.data.shape, destImageHdu.data.shape))
 
-            # Copy image
-            destImageHdu.data = sourceImageHdu.data
+            # Copy image and normalise
+            total = np.sum(sourceImageHdu.data)
+            if np.fabs(total) > 0:
+                destImageHdu.data = sourceImageHdu.data / total
+            else:
+                destImageHdu.data = sourceImageHdu.data
             destHduList.writeto(args.inputfile, clobber=True)
 
     except IOError, msg:

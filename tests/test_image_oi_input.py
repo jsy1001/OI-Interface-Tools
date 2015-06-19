@@ -92,7 +92,7 @@ class ImageOiInputTestCase(unittest.TestCase):
             hdulist.__class__ = HDUListPlus
             param = hdulist[INPUT_PARAM_NAME].header
             self.assertTrue(np.all(hdulist[param['INIT_IMG']].data ==
-                                   pri.data))
+                                   pri.data / np.sum(pri.data)))
 
     def test_edit(self):
         """Test edit command"""
