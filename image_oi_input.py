@@ -8,7 +8,7 @@ import os.path
 
 from astropy.io import fits
 
-from InitImg import InitImg, MAS_TO_RAD
+from InitImg import InitImg, MAS_TO_DEG
 from HDUListPlus import HDUListPlus
 
 INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
@@ -29,7 +29,7 @@ def create(args):
 
     # Create initial image
     img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
-    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_RAD, args.cdelt1 * MAS_TO_RAD],
+    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_DEG, args.cdelt1 * MAS_TO_DEG],
                ctype=['RA', 'DEC'])
     if args.modeltype == 'gaussian':
         img.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
@@ -46,11 +46,12 @@ def create(args):
     for key, value in args.param:
         inputParam[key] = value
 
-    # Write FITS file
-    hdulist = fits.HDUList(hdus=[img.makePrimaryHDU(),
-                                 fits.BinTableHDU(header=inputParam)])
-    hdulist.writeto(args.inputfile, clobber=args.overwrite)
-
+    # Write out copy of input OIFITS with new HDUs added
+    with fits.open(args.datafile) as hdulist:
+        hdulist[0] = img.makePrimaryHDU()
+        # :TODO: copy primary header keywords from datafile?
+        hdulist.append(fits.BinTableHDU(header=inputParam))
+        hdulist.writeto(args.inputfile, clobber=args.overwrite)
 
 def copyimage(args):
     """Copy image to existing image reconstruction input/output file."""
@@ -155,6 +156,8 @@ def create_parser():
                                           help='create new imaging input file')
     parser_create.add_argument('-o', '--overwrite', action='store_true',
                                help='Overwrite existing file')
+    parser_create.add_argument('datafile',
+                               help='Input OIFITS file')
     parser_create.add_argument('inputfile',
                                help='FITS file to create')
     parser_create.add_argument('naxis1', type=int,
