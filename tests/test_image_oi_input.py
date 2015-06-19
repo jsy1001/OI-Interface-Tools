@@ -79,12 +79,20 @@ class ImageOiInputTestCase(unittest.TestCase):
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
         tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
-        fits.PrimaryHDU(data=np.zeros((naxis1, naxis1))).writeto(tempImage)
+        pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
+        pri.writeto(tempImage)
         args = self.parser.parse_args(['copyimage', self.tempResult.name,
                                        tempImage.name])
         args.func(args)
         tempImage.close()
         os.remove(tempImage.name)
+
+        # Test destination image
+        with fits.open(self.tempResult.name) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[INPUT_PARAM_NAME].header
+            self.assertTrue(np.all(hdulist[param['INIT_IMG']].data ==
+                                   pri.data))
 
     def test_edit(self):
         """Test edit command"""

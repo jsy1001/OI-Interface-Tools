@@ -53,6 +53,7 @@ def create(args):
         hdulist.append(fits.BinTableHDU(header=inputParam))
         hdulist.writeto(args.inputfile, clobber=args.overwrite)
 
+
 def copyimage(args):
     """Copy image to existing image reconstruction input/output file."""
 
@@ -68,7 +69,7 @@ def copyimage(args):
                 sourceImageHdu = sourceHduList[sourceParam['INIT_IMG']]
             except KeyError:
                 # Fallback to primary HDU
-                sourceImageHdu = destHduList[0]
+                sourceImageHdu = sourceHduList[0]
             destParam = destHduList[INPUT_PARAM_NAME].header
             destImageHdu = destHduList[destParam['INIT_IMG']]
 
@@ -79,7 +80,7 @@ def copyimage(args):
 
             # Copy image
             destImageHdu.data = sourceImageHdu.data
-            sourceHduList.writeto(args.inputfile, clobber=True)
+            destHduList.writeto(args.inputfile, clobber=True)
 
     except IOError, msg:
         sys.exit(msg)
