@@ -32,7 +32,12 @@ def create(args):
     img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
     img.setWCS(cdelt=[args.cdelt1 * MAS_TO_DEG, args.cdelt1 * MAS_TO_DEG],
                ctype=['RA', 'DEC'])
-    if args.modeltype == 'gaussian':
+    if args.modeltype == 'dirac':
+        img.addDirac(args.naxis1 / 2, args.naxis1 / 2, 1.0)
+    elif args.modeltype == 'uniform':
+        img.addUniformDisk(args.naxis1 / 2, args.naxis1 / 2, 1.0,
+                           args.modelwidth / args.cdelt1)
+    elif args.modeltype == 'gaussian':
         img.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
                         args.modelwidth / args.cdelt1)
 
@@ -118,9 +123,7 @@ def show_hdu(hdu):
 
 
 def show(args):
-    """List parameters from image reconstruction input/output file.
-
-    """
+    """List parameters from image reconstruction input/output file."""
     try:
         with fits.open(args.inputfile) as hdulist:
             try:
@@ -171,10 +174,11 @@ def create_parser():
     parser_create.add_argument('cdelt1', type=float,
                                help='Pixel size /mas (cdelt2 == cdelt1)')
     parser_create.add_argument('-mt', '--modeltype', default='blank',
-                               choices=['blank', 'gaussian'],
-                               help='Image model type')
+                               choices=['blank',
+                                        'dirac', 'uniform', 'gaussian'],
+                               help='Initial image model type')
     parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
-                               help='Image model width /mas')
+                               help='Initial image model width /mas')
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
                                help='Initial parameter e.g. MAXITER=200')
     parser_create.set_defaults(func=create)

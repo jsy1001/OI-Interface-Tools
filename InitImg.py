@@ -123,13 +123,66 @@ class InitImg(object):
         """
         self.image /= np.sum(self.image)
 
+    def addDirac(self, x, y, flux):
+        """Add a delta function component to the current image.
+
+        Args:
+          x (float): Component position on first (fast) FITS axis.
+          y (float): Component position on second (slow) FITS axis.
+          flux (float): Integrated flux of component.
+
+        Example:
+
+        >>> img = InitImg('test', 64, 64)
+        >>> img.addDirac(12.0, 37.0, 0.5)
+        >>> max1 = np.zeros((64,))
+        >>> max1[37] = 12
+        >>> np.all(np.argmax(img.image, axis=1) == max1)
+        True
+        >>> max0 = np.zeros((64,))
+        >>> max0[12] = 37
+        >>> np.all(np.argmax(img.image, axis=0) == max0)
+        True
+        >>> img.addDirac(13.5, 42.8, 0.25)
+        >>> np.abs(np.sum(img.image) - 0.75) < 1e-6
+        True
+
+        """
+        self.image[np.rint(y)][np.rint(x)] += flux
+
+    def addUniformDisk(self, x, y, flux, diameter):
+        """Add a circular uniform disk component to the current image.
+
+        Args:
+          x (float): Component position on first (fast) FITS axis.
+          y (float): Component position on second (slow) FITS axis.
+          flux (float): Integrated flux of component.
+          diameter (float): Disk diameter.
+
+        Example:
+
+        >>> img = InitImg('test', 64, 64)
+        >>> img.addUniformDisk(12.0, 37.0, 0.5, 11)
+        >>> img.addUniformDisk(13.5, 42.8, 0.25, 11)
+        >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
+        True
+
+        """
+        radius = diameter / 2
+        area = pi * radius**2
+        for iy in range(self.naxis2):
+            for ix in range(self.naxis1):
+                r = np.sqrt((ix - x)**2 + (iy - y)**2)
+                if r <= radius:
+                    self.image[iy][ix] += flux / area
+
     def addGaussian(self, x, y, flux, fwhm):
         """Add a circular Gaussian component to the current image.
 
         Args:
           x (float): Component position on first (fast) FITS axis.
           y (float): Component position on second (slow) FITS axis.
-          flux (float): Integrated flux of component.
+          flux (float): Integrated flux of component (to infinite limits).
           fwhm (float): Full width at half maximum intensity.
 
         Example:
@@ -140,7 +193,8 @@ class InitImg(object):
         True
         >>> np.all(np.argmax(img.image, axis=0) == 37)
         True
-        >>> np.abs(np.sum(img.image) - 0.5) < 1e-6
+        >>> img.addGaussian(11.2, 23.6, 0.25, 5)
+        >>> np.abs(np.sum(img.image) - 0.75) < 1e-6
         True
 
         """
@@ -148,7 +202,7 @@ class InitImg(object):
         for iy in range(self.naxis2):
             for ix in range(self.naxis1):
                 rsq = (ix - x)**2 + (iy - y)**2
-                self.image[iy][ix] = peak * exp(-4 * log(2) * rsq / fwhm**2)
+                self.image[iy][ix] += peak * exp(-4 * log(2) * rsq / fwhm**2)
 
 
 if __name__ == "__main__":
