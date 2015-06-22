@@ -111,6 +111,30 @@ class ImageOiInputTestCase(unittest.TestCase):
         args = self.parser.parse_args(['show', self.tempResult.name])
         args.func(args)
 
+    def test_check(self):
+        """Test check command"""
+        self.create(self.tempResult.name)
+        args = self.parser.parse_args(['check', self.tempResult.name])
+        args.func(args)
+
+    def test_check_no_param(self):
+        """Input param HDU missing, should fail with SystemExit"""
+        args = self.parser.parse_args(['check', self.datafile])
+        with self.assertRaises(SystemExit):
+            args.func(args)
+
+    def test_check_no_image(self):
+        """Initial image HDU missing, should fail with SystemExit"""
+        self.create(self.tempResult.name)
+        with fits.open(self.tempResult.name) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[INPUT_PARAM_NAME].header
+            del hdulist[param['INIT_IMG']].header['HDUNAME']
+            hdulist.writeto(self.tempResult.name, clobber=True)
+        args = self.parser.parse_args(['check', self.tempResult.name])
+        with self.assertRaises(SystemExit):
+            args.func(args)
+
 
 if __name__ == '__main__':
     unittest.main()

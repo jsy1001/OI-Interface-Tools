@@ -16,7 +16,10 @@ import numpy as np
 from astropy.io import fits
 from astropy import wcs
 
+from HDUListPlus import HDUListPlus
+
 MAS_TO_DEG = 1/3600/1000
+INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
 
 
 class InitImg(object):
@@ -54,6 +57,18 @@ class InitImg(object):
       >>> np.all(img.image == 0.0)
       True
 
+      The following creates an InitImg instance from an existing
+      FITS file (itself made from an InitImg):
+
+      >>> img1 = InitImg('test', 64, 32)
+      >>> img1.makePrimaryHDU().writeto('tmp.fits')
+      >>> img2 = InitImg.fromImageFilename('tmp.fits')
+      >>> assert img1.name == img2.name
+      >>> assert img1.naxis1 == img2.naxis1
+      >>> assert img1.naxis2 == img2.naxis2
+      >>> assert np.all(img1.image == img2.image)
+      >>> os.remove('tmp.fits')
+
     """
 
     def __init__(self, name, naxis1, naxis2):
@@ -62,6 +77,41 @@ class InitImg(object):
         self.naxis2 = naxis2
         self.image = np.zeros((naxis2, naxis1), np.float)  # axes are slow,fast
         self._wcs = wcs.WCS(naxis=2)
+
+    @classmethod
+    def fromImageFilename(cls, filename):
+        """Initialize InitImg from a FITS image file."""
+        with fits.open(filename) as hdulist:
+            imageHdu = hdulist[0]
+            try:
+                name = imageHdu.header['HDUNAME']
+            except KeyError:
+                name = os.path.split(os.path.basename(filename))[0]
+            naxis1 = imageHdu.data.shape[1]
+            naxis2 = imageHdu.data.shape[0]
+            self = cls(name, naxis1, naxis2)
+            self.image = imageHdu.data
+            # :TODO: set WCS keywords from file?
+            return self
+
+    @classmethod
+    def fromInputFilename(cls, filename):
+        """Initialize InitImg from an image reconstruction input file."""
+        with fits.open(filename) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[INPUT_PARAM_NAME].header
+            imageHdu = hdulist[param['INIT_IMG']]
+            if (type(imageHdu) is not fits.ImageHDU and
+                    type(imageHdu) is not fits.PrimaryHDU):
+                msg = "HDU referenced by INIT_IMG is not an image HDU."
+                raise TypeError(msg)
+            name = imageHdu.header['HDUNAME']
+            naxis1 = imageHdu.data.shape[1]
+            naxis2 = imageHdu.data.shape[0]
+            self = cls(name, naxis1, naxis2)
+            self.image = imageHdu.data
+            # :TODO: set WCS keywords from file?
+            return self
 
     def setWCS(self, **kwargs):
         """Set World Coordinate System attributes.

@@ -139,6 +139,27 @@ def show(args):
         sys.exit(msg)
 
 
+def check(args):
+    """Check whether image reconstruction input/output file is valid."""
+    try:
+        with fits.open(args.inputfile) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            try:
+                hdulist['OI_TARGET']
+            except KeyError:
+                sys.exit("'%s' has no OIFITS data." % args.inputfile)
+            # :TODO: check mandatory input parameters present
+        try:
+            img = InitImg.fromInputFilename(args.inputfile)
+        except:
+            sys.exit("Failed to read initial image from '%s'" % args.inputfile)
+        # :TODO: check prior image present if referenced
+        # :TODO: check images normalised?
+
+    except IOError, msg:
+        sys.exit(msg)
+
+
 def parse_keyword(arg):
     """Parse command line key-value pair."""
     key, value = arg.split('=')[:2]
@@ -179,11 +200,13 @@ def create_parser():
                                help='Initial image model type')
     parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
                                help='Initial image model width /mas')
+    # :TODO: prior image (use InitImg class)
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
                                help='Initial parameter e.g. MAXITER=200')
     parser_create.set_defaults(func=create)
 
     # Create parser for the "copyimage" command
+    # :TODO: prior image
     parser_copyimage = subparsers.add_parser('copyimage', help=
                                              'copy initial image from file')
     parser_copyimage.add_argument('inputfile',
@@ -208,6 +231,13 @@ def create_parser():
     parser_show.add_argument('inputfile',
                              help='FITS file to interrogate')
     parser_show.set_defaults(func=show)
+
+    # Create parser for the "check" command
+    parser_check = subparsers.add_parser('check',
+                                         help='check input file is valid')
+    parser_check.add_argument('inputfile',
+                              help='FITS file to interrogate')
+    parser_check.set_defaults(func=check)
 
     return parser
 
