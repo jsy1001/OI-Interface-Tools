@@ -54,8 +54,9 @@ def create(args):
 
     # Write out copy of input OIFITS with new HDUs added
     with fits.open(args.datafile) as hdulist:
+        cards = hdulist[0].header.copy(True).items()
         hdulist[0] = img.makePrimaryHDU()
-        # :TODO: copy primary header keywords from datafile?
+        hdulist[0].header.extend(cards)
         hdulist.append(fits.BinTableHDU(header=inputParam))
         hdulist.writeto(args.inputfile, clobber=args.overwrite)
 
