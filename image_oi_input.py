@@ -151,6 +151,7 @@ def check(args):
             # :TODO: check mandatory input parameters present
         try:
             img = InitImg.fromInputFilename(args.inputfile)
+            img.getPixelSize()
         except:
             sys.exit("Failed to read initial image from '%s'" % args.inputfile)
         # :TODO: check prior image present if referenced

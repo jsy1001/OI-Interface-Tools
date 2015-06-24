@@ -30,6 +30,8 @@ class InitImg(object):
       name (str): Name of image, written as FITS HDUNAME keyword.
       naxis1 (int): First (fast) dimension of image (FITS ordering).
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
+      wcsHeader: FITS header keywords to initialize internal
+                 astropy.wcs.WCS object, optional.
 
     Attributes:
       name (str): Name of image, written as FITS HDUNAME keyword.
@@ -67,16 +69,17 @@ class InitImg(object):
       >>> assert img1.naxis1 == img2.naxis1
       >>> assert img1.naxis2 == img2.naxis2
       >>> assert np.all(img1.image == img2.image)
+      >>> assert img1.getPixelSize() == img2.getPixelSize()
       >>> os.remove('tmp.fits')
 
     """
 
-    def __init__(self, name, naxis1, naxis2):
+    def __init__(self, name, naxis1, naxis2, wcsHeader=None):
         self.name = name
         self.naxis1 = naxis1
         self.naxis2 = naxis2
         self.image = np.zeros((naxis2, naxis1), np.float)  # axes are slow,fast
-        self._wcs = wcs.WCS(naxis=2)
+        self._wcs = wcs.WCS(header=wcsHeader, naxis=2)
 
     @classmethod
     def fromImageFilename(cls, filename):
@@ -89,9 +92,8 @@ class InitImg(object):
                 name = os.path.split(os.path.basename(filename))[0]
             naxis1 = imageHdu.data.shape[1]
             naxis2 = imageHdu.data.shape[0]
-            self = cls(name, naxis1, naxis2)
+            self = cls(name, naxis1, naxis2, imageHdu.header)
             self.image = imageHdu.data
-            # :TODO: set WCS keywords from file?
             return self
 
     @classmethod
@@ -108,9 +110,8 @@ class InitImg(object):
             name = imageHdu.header['HDUNAME']
             naxis1 = imageHdu.data.shape[1]
             naxis2 = imageHdu.data.shape[0]
-            self = cls(name, naxis1, naxis2)
+            self = cls(name, naxis1, naxis2, imageHdu.header)
             self.image = imageHdu.data
-            # :TODO: set WCS keywords from file?
             return self
 
     def setWCS(self, **kwargs):
@@ -124,10 +125,17 @@ class InitImg(object):
 
         >>> img = InitImg('test', 64, 64)
         >>> img.setWCS(cdelt=[0.25 * MAS_TO_DEG, 0.25 * MAS_TO_DEG])
+        >>> img.getPixelSize()
+        0.25
 
         """
         for key, value in kwargs.iteritems():
             setattr(self._wcs.wcs, key, value)
+
+    def getPixelSize(self):
+        """Return pixel size in mas."""
+        assert self._wcs.wcs.cdelt[0] == self._wcs.wcs.cdelt[1]
+        return self._wcs.wcs.cdelt[0] / MAS_TO_DEG
 
     def isSquare(self):
         """Does image have the same dimension in both axes?"""
