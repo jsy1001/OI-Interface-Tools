@@ -7,7 +7,7 @@ Attributes:
 
 """
 
-from __future__ import division
+from __future__ import division, print_function
 
 from math import pi, exp, log
 import os
@@ -85,15 +85,15 @@ class InitImg(object):
     def fromImageFilename(cls, filename):
         """Initialize InitImg from a FITS image file."""
         with fits.open(filename) as hdulist:
-            imageHdu = hdulist[0]
+            imageHDU = hdulist[0]
             try:
-                name = imageHdu.header['HDUNAME']
+                name = imageHDU.header['HDUNAME']
             except KeyError:
                 name = os.path.split(os.path.basename(filename))[0]
-            naxis1 = imageHdu.data.shape[1]
-            naxis2 = imageHdu.data.shape[0]
-            self = cls(name, naxis1, naxis2, imageHdu.header)
-            self.image = imageHdu.data
+            naxis1 = imageHDU.data.shape[1]
+            naxis2 = imageHDU.data.shape[0]
+            self = cls(name, naxis1, naxis2, imageHDU.header)
+            self.image = imageHDU.data
             return self
 
     @classmethod
@@ -107,17 +107,16 @@ class InitImg(object):
         with fits.open(filename) as hdulist:
             hdulist.__class__ = HDUListPlus
             param = hdulist[INPUT_PARAM_NAME].header
-            imageHdu = hdulist[param['INIT_IMG']]
-            if (type(imageHdu) is not fits.ImageHDU and
-                    type(imageHdu) is not fits.PrimaryHDU):
+            imageHDU = hdulist[param['INIT_IMG']]
+            if not isinstance(imageHDU, (fits.PrimaryHDU, fits.ImageHDU)):
                 raise TypeError("""\
 HDU '%s' referenced by INIT_IMG is not an image HDU\
                 """ % param['INIT_IMG'])
-            name = imageHdu.header['HDUNAME']
-            naxis1 = imageHdu.data.shape[1]
-            naxis2 = imageHdu.data.shape[0]
-            self = cls(name, naxis1, naxis2, imageHdu.header)
-            self.image = imageHdu.data
+            name = imageHDU.header['HDUNAME']
+            naxis1 = imageHDU.data.shape[1]
+            naxis2 = imageHDU.data.shape[0]
+            self = cls(name, naxis1, naxis2, imageHDU.header)
+            self.image = imageHDU.data
             return self
 
     def setWCS(self, **kwargs):

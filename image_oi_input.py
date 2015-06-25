@@ -1,12 +1,13 @@
 #!/usr/bin/env python2
 
+"""Python script to manage OI imaging input files."""
+
 from __future__ import division, print_function
 
 import argparse
 import sys
 import os.path
 
-import numpy as np
 from astropy.io import fits
 
 from InitImg import InitImg, MAS_TO_DEG
@@ -39,21 +40,21 @@ def writefile(filename, datafile, initImage, inputParam,
     """
     hdulist = fits.HDUList(initImage.makePrimaryHDU())
 
-    with fits.open(datafile) as dataHduList:
+    with fits.open(datafile) as dataHDUList:
 
         # Copy OIFITS HDUs
-        for hdu in dataHduList[1:]:
+        for hdu in dataHDUList[1:]:
             if hdu.header['EXTNAME'][:3] == 'OI_':
                 hdulist.append(hdu)
 
         # Copy primary header keywords
-        cards = dataHduList[0].header.copy(True).items()
+        cards = dataHDUList[0].header.copy(True).items()
         hdulist[0].header.extend(cards)
 
         # Append parameter HDUs
         hdu = fits.BinTableHDU(header=inputParam)
         hdulist.append(hdu)
-        if outputParam:
+        if outputParam is not None:
             hdulist.append(fits.BinTableHDU(header=outputParam))
 
         hdulist.writeto(filename, clobber=clobber)
@@ -103,15 +104,15 @@ def copyimage(args):
     try:
         initImage = InitImg.fromInputFilename(args.inputfile)
 
-        with fits.open(args.imagefile) as imageHduList, \
-                fits.open(args.inputfile) as inputHduList:
+        with fits.open(args.imagefile) as imageHDUList, \
+                fits.open(args.inputfile) as inputHDUList:
 
-            initImage.replaceImage(imageHduList[0].data)
+            initImage.replaceImage(imageHDUList[0].data)
             initImage.normalise()
 
-            inputParam = inputHduList[INPUT_PARAM_NAME].header
+            inputParam = inputHDUList[INPUT_PARAM_NAME].header
             try:
-                outputParam = inputHduList[OUTPUT_PARAM_NAME].header
+                outputParam = inputHDUList[OUTPUT_PARAM_NAME].header
             except KeyError:
                 outputParam = None
 
@@ -142,9 +143,9 @@ def edit(args):
 def show_hdu(hdu):
     """List parameters from hdu."""
     print('=== %s ===' % hdu.header['EXTNAME'])
-    for p in hdu.header:
-        if p not in RESERVED_KEYWORDS:
-            print('%-8s = %s' % (p, hdu.header[p]))
+    for key in hdu.header:
+        if key not in RESERVED_KEYWORDS:
+            print('%-8s = %s' % (key, hdu.header[key]))
     print('---')
 
 
@@ -177,7 +178,7 @@ def check(args):
                 extname = hdulist[0].header['EXTNAME']
             except KeyError:
                 pass
-            if extname:
+            if extname is not None:
                 sys.exit("'%s' should not use EXTNAME in the primary header." %
                          args.inputfile)
 
@@ -242,6 +243,7 @@ def create_parser():
     parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
                                help='Initial image model width /mas')
     # :TODO: prior image (use InitImg class)
+    # Note dimensions and pixel size must match initial image
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
                                help='Initial parameter e.g. MAXITER=200')
     parser_create.set_defaults(func=create)

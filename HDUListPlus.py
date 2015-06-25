@@ -1,3 +1,7 @@
+"""Python module to extend astropy.io.fits."""
+
+from __future__ import division, print_function
+
 from astropy.io import fits
 
 
@@ -22,8 +26,8 @@ class HDUListPlus(fits.HDUList):
                 try:
                     name = hdu.header['HDUNAME']
                     ver = hdu.header['HDUVER']
-                except:
+                except KeyError:
                     pass
                 if name == index or (name, ver) == index:
                     return hdu
-            raise KeyError, "HDU '%s' not found." % index
+            raise KeyError("HDU '%s' not found." % index)
