@@ -170,11 +170,25 @@ def check(args):
     try:
         with fits.open(args.inputfile) as hdulist:
             hdulist.__class__ = HDUListPlus
+
+            # Check for illegal use of EXTNAME in primary header
+            extname = None
+            try:
+                extname = hdulist[0].header['EXTNAME']
+            except KeyError:
+                pass
+            if extname:
+                sys.exit("'%s' should not use EXTNAME in the primary header." %
+                         args.inputfile)
+
+            # Check OIFITS data present
             try:
                 hdulist['OI_TARGET']
             except KeyError:
                 sys.exit("'%s' has no OIFITS data." % args.inputfile)
+
             # :TODO: check mandatory input parameters present
+
         try:
             img = InitImg.fromInputFilename(args.inputfile)
             img.getPixelSize()
