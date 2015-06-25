@@ -23,23 +23,60 @@ DEFAULT_PARAM = [('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
                  ('MAXITER', 200), ('RGL_NAME', 'mem_prior'), ('RGL_WGT', 1e5)]
 
 
+def writefile(filename, datafile, initImage, inputParam,
+              outputParam=None, clobber=False):
+    """Write new image reconstruction input/output file.
+
+    Args:
+      filename (str): Filename for result.
+      datafile (str): OIFITS filename.
+      initImage (InitImg): Initial image.
+      inputParam (fits.Header): Input parameters.
+      outputParam (fits.Header): Output parameters, optional.
+      clobber (bool): Specifies whether existing file should be
+                      overwritten, optional.
+
+    """
+    hdulist = fits.HDUList(initImage.makePrimaryHDU())
+
+    with fits.open(datafile) as dataHduList:
+
+        # Copy OIFITS HDUs
+        for hdu in dataHduList[1:]:
+            if hdu.header['EXTNAME'][:3] == 'OI_':
+                hdulist.append(hdu)
+
+        # Copy primary header keywords
+        cards = dataHduList[0].header.copy(True).items()
+        hdulist[0].header.extend(cards)
+
+        # Append parameter HDUs
+        hdu = fits.BinTableHDU(header=inputParam)
+        hdulist.append(hdu)
+        if outputParam:
+            hdulist.append(fits.BinTableHDU(header=outputParam))
+
+        hdulist.writeto(filename, clobber=clobber)
+
+
 def create(args):
-    """Create new image reconstruction input file."""
+    """Create image reconstruction input file from OIFITS data."""
     if not args.overwrite and os.path.exists(args.inputfile):
         sys.exit("Not creating '%s' as it already exists." % args.inputfile)
 
     # Create initial image
-    img = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
-    img.setWCS(cdelt=[args.cdelt1 * MAS_TO_DEG, args.cdelt1 * MAS_TO_DEG],
-               ctype=['RA', 'DEC'])
+    initImage = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
+    initImage.setWCS(cdelt=[args.cdelt1 * MAS_TO_DEG,
+                            args.cdelt1 * MAS_TO_DEG],
+                     ctype=['RA', 'DEC'])
     if args.modeltype == 'dirac':
-        img.addDirac(args.naxis1 / 2, args.naxis1 / 2, 1.0)
+        initImage.addDirac(args.naxis1 / 2, args.naxis1 / 2, 1.0)
     elif args.modeltype == 'uniform':
-        img.addUniformDisk(args.naxis1 / 2, args.naxis1 / 2, 1.0,
-                           args.modelwidth / args.cdelt1)
+        initImage.addUniformDisk(args.naxis1 / 2, args.naxis1 / 2, 1.0,
+                                 args.modelwidth / args.cdelt1)
     elif args.modeltype == 'gaussian':
-        img.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
-                        args.modelwidth / args.cdelt1)
+        initImage.addGaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
+                              args.modelwidth / args.cdelt1)
 
     # Create input parameters with defaults
     inputParam = fits.Header()
@@ -52,46 +89,34 @@ def create(args):
     for key, value in args.param:
         inputParam[key] = value
 
-    # Write out copy of input OIFITS with new HDUs added
-    with fits.open(args.datafile) as hdulist:
-        cards = hdulist[0].header.copy(True).items()
-        hdulist[0] = img.makePrimaryHDU()
-        hdulist[0].header.extend(cards)
-        hdulist.append(fits.BinTableHDU(header=inputParam))
-        hdulist.writeto(args.inputfile, clobber=args.overwrite)
+    writefile(args.inputfile, args.datafile, initImage, inputParam,
+              clobber=args.overwrite)
 
 
 def copyimage(args):
-    """Copy image to existing image reconstruction input/output file."""
+    """Copy image to existing image reconstruction input/output file.
 
-    # Open files
+    Retains existing WCS information. Any WCS information in the image
+    file is ignored.
+
+    """
     try:
-        with fits.open(args.imagefile) as sourceHduList, \
-             fits.open(args.inputfile) as destHduList:
+        initImage = InitImg.fromInputFilename(args.inputfile)
 
-            # Find source and destination image HDUs
-            destHduList.__class__ = HDUListPlus
+        with fits.open(args.imagefile) as imageHduList, \
+                fits.open(args.inputfile) as inputHduList:
+
+            initImage.replaceImage(imageHduList[0].data)
+            initImage.normalise()
+
+            inputParam = inputHduList[INPUT_PARAM_NAME].header
             try:
-                sourceParam = sourceHduList[INPUT_PARAM_NAME].header
-                sourceImageHdu = sourceHduList[sourceParam['INIT_IMG']]
+                outputParam = inputHduList[OUTPUT_PARAM_NAME].header
             except KeyError:
-                # Fallback to primary HDU
-                sourceImageHdu = sourceHduList[0]
-            destParam = destHduList[INPUT_PARAM_NAME].header
-            destImageHdu = destHduList[destParam['INIT_IMG']]
+                outputParam = None
 
-            # Check dimensions match
-            if sourceImageHdu.data.shape != destImageHdu.data.shape:
-                sys.exit("Image dimensions %s do not match destination %s" %
-                         (sourceImageHdu.data.shape, destImageHdu.data.shape))
-
-            # Copy image and normalise
-            total = np.sum(sourceImageHdu.data)
-            if np.fabs(total) > 0:
-                destImageHdu.data = sourceImageHdu.data / total
-            else:
-                destImageHdu.data = sourceImageHdu.data
-            destHduList.writeto(args.inputfile, clobber=True)
+            writefile(args.inputfile, args.inputfile, initImage,
+                      inputParam, outputParam, clobber=True)
 
     except IOError, msg:
         sys.exit(msg)

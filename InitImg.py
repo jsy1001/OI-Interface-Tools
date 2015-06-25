@@ -98,15 +98,21 @@ class InitImg(object):
 
     @classmethod
     def fromInputFilename(cls, filename):
-        """Initialize InitImg from an image reconstruction input file."""
+        """Initialize InitImg from an image reconstruction input file.
+
+        Raises:
+          TypeError: HDU referenced by INIT_IMG parameter is not an image HDU.
+
+        """
         with fits.open(filename) as hdulist:
             hdulist.__class__ = HDUListPlus
             param = hdulist[INPUT_PARAM_NAME].header
             imageHdu = hdulist[param['INIT_IMG']]
             if (type(imageHdu) is not fits.ImageHDU and
                     type(imageHdu) is not fits.PrimaryHDU):
-                msg = "HDU referenced by INIT_IMG is not an image HDU."
-                raise TypeError(msg)
+                raise TypeError("""\
+HDU '%s' referenced by INIT_IMG is not an image HDU\
+                """ % param['INIT_IMG'])
             name = imageHdu.header['HDUNAME']
             naxis1 = imageHdu.data.shape[1]
             naxis2 = imageHdu.data.shape[0]
@@ -131,6 +137,33 @@ class InitImg(object):
         """
         for key, value in kwargs.iteritems():
             setattr(self._wcs.wcs, key, value)
+
+    def replaceImage(self, data):
+        """Replace current image with one of same dimensions.
+
+        Args:
+          data (ndarray): Replacement image.
+
+        Raises:
+          TypeError: data is not an ndarray.
+          ValueError: shape of data doesn't match existing image dimensions.
+
+        Example:
+
+        >>> img = InitImg('test', 64, 64)
+        >>> img.replaceImage(np.zeros((64, 64)))
+
+        """
+        if type(data) is not np.ndarray:
+            raise TypeError("""\
+replaceImage() argument must be an ndarray not '%s'\
+            """ % type(data))
+        if data.shape != self.image.shape:
+            raise ValueError("""\
+Shape of replaceImage() argument doesn't match existing image dimensions: \
+expected %s but got %s\
+            """ % (self.image.shape, data.shape))
+        self.image = data
 
     def getPixelSize(self):
         """Return pixel size in mas."""
@@ -179,7 +212,9 @@ class InitImg(object):
         True
 
         """
-        self.image /= np.sum(self.image)
+        total = np.sum(self.image)
+        if np.fabs(total) > 0:
+            self.image /= total
 
     def addDirac(self, x, y, flux):
         """Add a delta function component to the current image.
