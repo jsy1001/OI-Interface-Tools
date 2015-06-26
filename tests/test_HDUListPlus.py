@@ -35,44 +35,44 @@ class HDUListPlusTestCase(unittest.TestCase):
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
             with self.assertRaises(IndexError):
-                hdu = hdulist[2]
+                hdulist[2]
 
     def test_invalid_key(self):
         """No match for key, should fail with KeyError"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
             with self.assertRaises(KeyError):
-                hdu = hdulist['notpresent']
+                hdulist['notpresent']
 
     def test_lookup_pos(self):
         """Test HDU lookup by position"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
-            hdu = hdulist[0]
+            hdulist[0]
 
     def test_lookup_extname(self):
         """Test HDU lookup by EXTNAME alone"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
-            hdu = hdulist[self.extname]
+            hdulist[self.extname]
 
     def test_lookup_extname_ver(self):
         """Test HDU lookup by (EXTNAME, EXTVER)"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
-            hdu = hdulist[self.extname, self.extver]
+            hdulist[self.extname, self.extver]
 
     def test_lookup_hduname(self):
         """Test HDU lookup by HDUNAME alone"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
-            hdu = hdulist[self.hduname]
+            hdulist[self.hduname]
 
     def test_lookup_hduname_ver(self):
         """Test HDU lookup by (HDUNAME, HDUVER)"""
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
-            hdu = hdulist[self.hduname, self.hduver]
+            hdulist[self.hduname, self.hduver]
 
 
 if __name__ == '__main__':
