@@ -39,6 +39,7 @@ class InitImg(object):
       naxis2 (int): Second (slow) dimension of image (FITS ordering).
       image (ndarray): The image pixel data as a numpy array
                        of shape (naxis2, naxis1).
+      pixelSize (float): Image pixel size in mas.
 
     Examples:
       The following creates a blank 64 by 32 image:
@@ -69,7 +70,7 @@ class InitImg(object):
       >>> assert img1.naxis1 == img2.naxis1
       >>> assert img1.naxis2 == img2.naxis2
       >>> assert np.all(img1.image == img2.image)
-      >>> assert img1.getPixelSize() == img2.getPixelSize()
+      >>> assert img1.pixelSize == img2.pixelSize
       >>> os.remove('tmp.fits')
 
     """
@@ -130,8 +131,8 @@ HDU '%s' referenced by INIT_IMG is not an image HDU\
 
         >>> img = InitImg('test', 64, 64)
         >>> img.setWCS(cdelt=[0.25 * MAS_TO_DEG, 0.25 * MAS_TO_DEG])
-        >>> img.getPixelSize()
-        0.25
+        >>> np.fabs(img.pixelSize - 0.25) < 1e-6
+        True
 
         """
         for key, value in kwargs.iteritems():
@@ -164,7 +165,8 @@ expected %s but got %s\
             """ % (self.image.shape, data.shape))
         self.image = data
 
-    def getPixelSize(self):
+    @property
+    def pixelSize(self):
         """Return pixel size in mas."""
         assert self._wcs.wcs.cdelt[0] == self._wcs.wcs.cdelt[1]
         return self._wcs.wcs.cdelt[0] / MAS_TO_DEG

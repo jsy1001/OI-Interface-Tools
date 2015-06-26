@@ -192,7 +192,7 @@ def check(args):
 
         try:
             img = InitImg.fromInputFilename(args.inputfile)
-            img.getPixelSize()
+            img.pixelSize
         except:
             sys.exit("Failed to read initial image from '%s'" % args.inputfile)
         # :TODO: check prior image present if referenced
