@@ -5,9 +5,10 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from GreyImg import MAS_TO_DEG
 from HDUListPlus import HDUListPlus
-from image_oi_input import create_parser, INPUT_PARAM_NAME, DEFAULT_PARAM
+from GreyImg import MAS_TO_DEG
+from ImagingFile import DEFAULT_PARAM, INPUT_PARAM_NAME
+from image_oi_input import create_parser
 
 
 class ImageOiInputTestCase(unittest.TestCase):
@@ -22,11 +23,11 @@ class ImageOiInputTestCase(unittest.TestCase):
         self.tempResult.close()
         os.remove(self.tempResult.name)
 
-    def create(self, inputfile, naxis1=64, cdelt1=0.25, param=[]):
+    def create(self, inputfile, naxis1=64, pixelsize=0.25, param=[]):
         """Create a temporary input file to read as part of a test"""
         args = self.parser.parse_args(['create', '--overwrite',
                                        self.datafile, inputfile,
-                                       str(naxis1), str(cdelt1)] + param)
+                                       str(naxis1), str(pixelsize)] + param)
         args.func(args)
 
     def test_create_exists(self):
@@ -42,10 +43,11 @@ class ImageOiInputTestCase(unittest.TestCase):
     def test_create(self):
         """Test create command"""
         naxis1 = 128
-        cdelt1 = 0.5
+        pixelsize = 0.5
         args = self.parser.parse_args(['create', '--overwrite',
                                        self.datafile, self.tempResult.name,
-                                       str(naxis1), str(cdelt1), 'MAXITER=50'])
+                                       str(naxis1), str(pixelsize),
+                                       'MAXITER=50'])
         args.func(args)
         with fits.open(self.tempResult.name) as hdulist:
             hdulist.__class__ = HDUListPlus
@@ -55,9 +57,9 @@ class ImageOiInputTestCase(unittest.TestCase):
             self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
             self.assertEqual(imageHdu.header['NAXIS2'], naxis1)
             self.assertAlmostEqual(imageHdu.header['CDELT1'],
-                                   cdelt1 * MAS_TO_DEG)
+                                   pixelsize * MAS_TO_DEG)
             self.assertAlmostEqual(imageHdu.header['CDELT2'],
-                                   cdelt1 * MAS_TO_DEG)
+                                   pixelsize * MAS_TO_DEG)
             for key, value in DEFAULT_PARAM:
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)
@@ -110,30 +112,6 @@ class ImageOiInputTestCase(unittest.TestCase):
         self.create(self.tempResult.name)
         args = self.parser.parse_args(['show', self.tempResult.name])
         args.func(args)
-
-    def test_check(self):
-        """Test check command"""
-        self.create(self.tempResult.name)
-        args = self.parser.parse_args(['check', self.tempResult.name])
-        args.func(args)
-
-    def test_check_no_param(self):
-        """Input param HDU missing, should fail with SystemExit"""
-        args = self.parser.parse_args(['check', self.datafile])
-        with self.assertRaises(SystemExit):
-            args.func(args)
-
-    def test_check_no_image(self):
-        """Initial image HDU missing, should fail with SystemExit"""
-        self.create(self.tempResult.name)
-        with fits.open(self.tempResult.name) as hdulist:
-            hdulist.__class__ = HDUListPlus
-            param = hdulist[INPUT_PARAM_NAME].header
-            del hdulist[param['INIT_IMG']].header['HDUNAME']
-            hdulist.writeto(self.tempResult.name, clobber=True)
-        args = self.parser.parse_args(['check', self.tempResult.name])
-        with self.assertRaises(SystemExit):
-            args.func(args)
 
 
 if __name__ == '__main__':
