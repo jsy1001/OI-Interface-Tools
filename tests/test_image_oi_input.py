@@ -5,7 +5,7 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from InitImg import MAS_TO_DEG
+from GreyImg import MAS_TO_DEG
 from HDUListPlus import HDUListPlus
 from image_oi_input import create_parser, INPUT_PARAM_NAME, DEFAULT_PARAM
 

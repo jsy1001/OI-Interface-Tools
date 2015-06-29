@@ -1,6 +1,6 @@
-"""Python module to create initial images for OI image reconstruction.
+"""Python module to create input images for OI image reconstruction.
 
-A grey initial image is represented by the InitImg class.
+A grey initial or prior image is represented by the GreyImg class.
 
 Attributes:
   MAS_TO_DEG (float): Conversion factor from milliarcseconds to degrees.
@@ -22,7 +22,7 @@ MAS_TO_DEG = 1/3600/1000
 INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
 
 
-class InitImg(object):
+class GreyImg(object):
 
     """OI image reconstruction initial image class.
 
@@ -44,7 +44,7 @@ class InitImg(object):
     Examples:
       The following creates a blank 64 by 32 image:
 
-      >>> img = InitImg('test', 64, 32)
+      >>> img = GreyImg('test', 64, 32)
       >>> img.name
       'test'
       >>> type(img.image) == np.ndarray
@@ -60,12 +60,12 @@ class InitImg(object):
       >>> np.all(img.image == 0.0)
       True
 
-      The following creates an InitImg instance from an existing
-      FITS file (itself made from an InitImg):
+      The following creates an GreyImg instance from an existing
+      FITS file (itself made from an GreyImg):
 
-      >>> img1 = InitImg('test', 64, 32)
+      >>> img1 = GreyImg('test', 64, 32)
       >>> img1.makePrimaryHDU().writeto('tmp.fits')
-      >>> img2 = InitImg.fromImageFilename('tmp.fits')
+      >>> img2 = GreyImg.fromImageFilename('tmp.fits')
       >>> assert img1.name == img2.name
       >>> assert img1.naxis1 == img2.naxis1
       >>> assert img1.naxis2 == img2.naxis2
@@ -84,7 +84,7 @@ class InitImg(object):
 
     @classmethod
     def fromImageFilename(cls, filename):
-        """Initialize InitImg from a FITS image file."""
+        """Initialize GreyImg from a FITS image file."""
         with fits.open(filename) as hdulist:
             imageHDU = hdulist[0]
             try:
@@ -99,7 +99,7 @@ class InitImg(object):
 
     @classmethod
     def fromInputFilename(cls, filename):
-        """Initialize InitImg from an image reconstruction input file.
+        """Initialize GreyImg from an image reconstruction input file.
 
         Raises:
           TypeError: HDU referenced by INIT_IMG parameter is not an image HDU.
@@ -129,7 +129,7 @@ HDU '%s' referenced by INIT_IMG is not an image HDU\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.setWCS(cdelt=[0.25 * MAS_TO_DEG, 0.25 * MAS_TO_DEG])
         >>> np.fabs(img.pixelSize - 0.25) < 1e-6
         True
@@ -150,7 +150,7 @@ HDU '%s' referenced by INIT_IMG is not an image HDU\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.replaceImage(np.zeros((64, 64)))
 
         """
@@ -181,7 +181,7 @@ expected %s but got %s\
         Examples:
           The following uses this method to create a FITS image file:
 
-          >>> img = InitImg('test', 64, 64)
+          >>> img = GreyImg('test', 64, 64)
           >>> img.makePrimaryHDU().writeto('utest.fits')
           >>> hlist = fits.open('utest.fits')
           >>> np.all(hlist[0].data == img.image)
@@ -206,7 +206,7 @@ expected %s but got %s\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.addGaussian(12.0, 37.0, 0.5, 40)
         >>> img.normalise()
         >>> np.abs(np.sum(img.image) - 1.0) < 1e-6
@@ -227,7 +227,7 @@ expected %s but got %s\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.addDirac(12.0, 37.0, 0.5)
         >>> max1 = np.zeros((64,))
         >>> max1[37] = 12
@@ -255,7 +255,7 @@ expected %s but got %s\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.addUniformDisk(12.0, 37.0, 0.5, 11)
         >>> img.addUniformDisk(13.5, 42.8, 0.25, 11)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
@@ -281,7 +281,7 @@ expected %s but got %s\
 
         Example:
 
-        >>> img = InitImg('test', 64, 64)
+        >>> img = GreyImg('test', 64, 64)
         >>> img.addGaussian(12.0, 37.0, 0.5, 5)
         >>> np.all(np.argmax(img.image, axis=1) == 12)
         True

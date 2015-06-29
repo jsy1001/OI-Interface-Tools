@@ -10,7 +10,7 @@ import os.path
 
 from astropy.io import fits
 
-from InitImg import InitImg, MAS_TO_DEG
+from GreyImg import GreyImg, MAS_TO_DEG
 from HDUListPlus import HDUListPlus
 
 INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
@@ -31,7 +31,7 @@ def writefile(filename, datafile, initImage, inputParam,
     Args:
       filename (str): Filename for result.
       datafile (str): OIFITS filename.
-      initImage (InitImg): Initial image.
+      initImage (GreyImg): Initial image.
       inputParam (fits.Header): Input parameters.
       outputParam (fits.Header): Output parameters, optional.
       clobber (bool): Specifies whether existing file should be
@@ -66,7 +66,7 @@ def create(args):
         sys.exit("Not creating '%s' as it already exists." % args.inputfile)
 
     # Create initial image
-    initImage = InitImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
+    initImage = GreyImg(INIT_IMG_NAME, args.naxis1, args.naxis1)
     initImage.setWCS(cdelt=[args.cdelt1 * MAS_TO_DEG,
                             args.cdelt1 * MAS_TO_DEG],
                      ctype=['RA', 'DEC'])
@@ -102,7 +102,7 @@ def copyimage(args):
 
     """
     try:
-        initImage = InitImg.fromInputFilename(args.inputfile)
+        initImage = GreyImg.fromInputFilename(args.inputfile)
 
         with fits.open(args.imagefile) as imageHDUList, \
                 fits.open(args.inputfile) as inputHDUList:
@@ -191,7 +191,7 @@ def check(args):
             # :TODO: check mandatory input parameters present
 
         try:
-            img = InitImg.fromInputFilename(args.inputfile)
+            img = GreyImg.fromInputFilename(args.inputfile)
             img.pixelSize
         except:
             sys.exit("Failed to read initial image from '%s'" % args.inputfile)
@@ -242,7 +242,7 @@ def create_parser():
                                help='Initial image model type')
     parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
                                help='Initial image model width /mas')
-    # :TODO: prior image (use InitImg class)
+    # :TODO: prior image (use GreyImg class)
     # Note dimensions and pixel size must match initial image
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
                                help='Initial parameter e.g. MAXITER=200')
