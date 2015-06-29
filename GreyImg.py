@@ -131,7 +131,7 @@ class GreyImg(object):
 
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.setwcs(ctype=['RA', 'DEC'])
-        >>> img.make_primary_hdu().writeto('utest.fits')
+        >>> img.make_primary_hdu().writeto('utest.fits', clobber=True)
         >>> hdulist = fits.open('utest.fits')
         >>> hdulist[0].header['CTYPE1']
         'RA'
@@ -194,10 +194,16 @@ class GreyImg(object):
           The following uses this method to create a FITS image file:
 
           >>> img = GreyImg('test', 64, 64, 0.25)
-          >>> img.make_primary_hdu().writeto('utest.fits')
+          >>> img.make_primary_hdu().writeto('utest.fits', clobber=True)
           >>> hdulist = fits.open('utest.fits')
+          >>> len(hdulist)
+          1
           >>> hdulist[0].header['HDUNAME']
           'test'
+          >>> hdulist[0].header['EXTNAME']
+          Traceback (most recent call last):
+              ...
+          KeyError: "Keyword 'EXTNAME' not found."
           >>> np.all(hdulist[0].data == img.image)
           True
           >>> os.remove('utest.fits')
@@ -209,7 +215,30 @@ class GreyImg(object):
         return hdu
 
     def make_image_hdu(self):
-        """Create a new fits.ImageHDU instance from the current image."""
+        """Create a new fits.ImageHDU instance from the current image.
+
+        Examples:
+
+          The following uses this method to create a FITS file
+          containing two HDUs, a dummy primary HDU and a 64 by 64
+          image HDU:
+
+          >>> img = GreyImg('test', 64, 64, 0.25)
+          >>> hdulist = fits.HDUList(fits.PrimaryHDU())
+          >>> hdulist.append(img.make_image_hdu())
+          >>> hdulist.writeto('utest.fits', clobber=True)
+          >>> hdulist = fits.open('utest.fits')
+          >>> len(hdulist)
+          2
+          >>> hdulist[1].header['HDUNAME']
+          'test'
+          >>> hdulist[1].header['EXTNAME']
+          'test'
+          >>> np.all(hdulist[1].data == img.image)
+          True
+          >>> os.remove('utest.fits')
+
+        """
         hdu = fits.ImageHDU(data=self.image, header=self._wcs.to_header())
         hdu.header['HDUNAME'] = self.name
         hdu.header['EXTNAME'] = self.name
