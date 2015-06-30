@@ -12,7 +12,6 @@ from astropy.io import fits
 
 from ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
 from GreyImg import GreyImg
-from HDUListPlus import HDUListPlus
 
 
 def create(args):
