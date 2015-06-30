@@ -64,26 +64,14 @@ class ImageOiInputTestCase(unittest.TestCase):
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)
 
-    def test_copyimage(self):
-        """Test image copy from a second imaging input file"""
-        naxis1 = 128
-        self.create(self.tempResult.name, naxis1)
-        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
-        self.create(tempImage.name, naxis1)
-        args = self.parser.parse_args(['copyimage', self.tempResult.name,
-                                       tempImage.name])
-        args.func(args)
-        tempImage.close()
-        os.remove(tempImage.name)
-
-    def test_copyimage_primary(self):
-        """Test image copy from primary HDU (fallback behaviour)"""
+    def test_copyinit(self):
+        """Test initial image copy from primary HDU"""
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
         tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
         pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
         pri.writeto(tempImage)
-        args = self.parser.parse_args(['copyimage', self.tempResult.name,
+        args = self.parser.parse_args(['copyinit', self.tempResult.name,
                                        tempImage.name])
         args.func(args)
         tempImage.close()
@@ -94,6 +82,26 @@ class ImageOiInputTestCase(unittest.TestCase):
             hdulist.__class__ = HDUListPlus
             param = hdulist[INPUT_PARAM_NAME].header
             self.assertTrue(np.all(hdulist[param['INIT_IMG']].data ==
+                                   pri.data / np.sum(pri.data)))
+
+    def test_copyprior(self):
+        """Test prior image copy from primary HDU"""
+        naxis1 = 128
+        self.create(self.tempResult.name, naxis1)
+        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
+        pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
+        pri.writeto(tempImage)
+        args = self.parser.parse_args(['copyprior', self.tempResult.name,
+                                       tempImage.name])
+        args.func(args)
+        tempImage.close()
+        os.remove(tempImage.name)
+
+        # Test destination image
+        with fits.open(self.tempResult.name) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[INPUT_PARAM_NAME].header
+            self.assertTrue(np.all(hdulist[param['RGL_PRIO']].data ==
                                    pri.data / np.sum(pri.data)))
 
     def test_edit(self):

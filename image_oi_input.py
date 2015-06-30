@@ -10,11 +10,9 @@ import os.path
 
 from astropy.io import fits
 
-from ImagingFile import ImagingFile
+from ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
 from GreyImg import GreyImg
 from HDUListPlus import HDUListPlus
-
-INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
 
 
 def create(args):
@@ -45,8 +43,8 @@ def create(args):
     result.writeto(args.inputfile, clobber=args.overwrite)
 
 
-def copyimage(args):
-    """Copy image to existing image reconstruction input/output file.
+def copyinit(args):
+    """Copy FITS image to image reconstruction input file as initial image.
 
     Retains existing WCS information. Any WCS information in the image
     file is ignored.
@@ -55,8 +53,38 @@ def copyimage(args):
     try:
         result = ImagingFile.fromfilename(args.inputfile)
         with fits.open(args.imagefile) as imghdulist:
+            if result.initimg is None:
+                sys.exit(("Input file '%s' missing initial image " %
+                          args.inputfile) + "hence pixelsize not defined")
             result.initimg.image = imghdulist[0].data
             result.initimg.normalise()
+            result.writeto(args.inputfile, clobber=True)
+    except IOError, msg:
+        sys.exit(msg)
+
+
+def copyprior(args):
+    """Copy FITS image to image reconstruction input file as prior image.
+
+    Retains existing WCS information. Any WCS information in the image
+    file is ignored.
+
+    """
+    try:
+        result = ImagingFile.fromfilename(args.inputfile)
+        with fits.open(args.imagefile) as imghdulist:
+            if result.initimg is None:
+                sys.exit(("Input file '%s' missing initial image " %
+                          args.inputfile) + "hence pixelsize not defined")
+            # Note optional prior image may not be set
+            if result.priorimg is None:
+                assert result.initimg is not None
+                result.priorimg = GreyImg(PRIOR_IMG_NAME,
+                                          result.initimg.naxis1,
+                                          result.initimg.naxis2,
+                                          result.initimg.pixelsize)
+            result.priorimg.image = imghdulist[0].data
+            result.priorimg.normalise()
             result.writeto(args.inputfile, clobber=True)
     except IOError, msg:
         sys.exit(msg)
@@ -128,15 +156,23 @@ def create_parser():
                                help='Initial parameter e.g. MAXITER=200')
     parser_create.set_defaults(func=create)
 
-    # Create parser for the "copyimage" command
-    # :TODO: prior image
-    parser_copyimage = subparsers.add_parser('copyimage', help=
-                                             'copy initial image from file')
-    parser_copyimage.add_argument('inputfile',
+    # Create parser for the "copyinit" command
+    parser_copyinit = subparsers.add_parser('copyinit', help=
+                                            'copy initial image from file')
+    parser_copyinit.add_argument('inputfile',
+                                 help='FITS file to modify')
+    parser_copyinit.add_argument('imagefile', help=
+                                 'FITS file with initial image in primary HDU')
+    parser_copyinit.set_defaults(func=copyinit)
+
+    # Create parser for the "copyprior" command
+    parser_copyprior = subparsers.add_parser('copyprior', help=
+                                             'copy prior image from file')
+    parser_copyprior.add_argument('inputfile',
                                   help='FITS file to modify')
-    parser_copyimage.add_argument('imagefile',
-                                  help='FITS file containing initial image')
-    parser_copyimage.set_defaults(func=copyimage)
+    parser_copyprior.add_argument('imagefile', help=
+                                  'FITS file with prior image in primary HDU')
+    parser_copyprior.set_defaults(func=copyprior)
 
     # Create parser for the "edit" command
     # :TODO: "set" better?
