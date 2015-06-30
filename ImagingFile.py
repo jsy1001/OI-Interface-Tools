@@ -15,8 +15,6 @@ Attributes:
 
 from __future__ import division, print_function
 
-import os
-
 from astropy.io import fits
 
 from GreyImg import GreyImg
@@ -105,6 +103,17 @@ def mergeheaders(headers):
     return ret
 
 
+def _reprheader(header):
+    if header is None:
+        return repr(header)
+    ret = "["
+    for key in header:
+        if key not in ['COMMENT', 'HISTORY']:
+            ret += "%s=%r, " % (key, header[key])
+    ret = ret.rstrip(' ,') + "]"
+    return ret
+
+
 class ImagingFile(object):
 
     """OI image reconstruction input/output file class.
@@ -147,6 +156,7 @@ class ImagingFile(object):
       >>> len(inp.datatables)
       5
       >>> inp.writeto('utest1.fits', True)
+      >>> import os
       >>> os.remove('utest1.fits')
 
       The following creates an imaging file object from an existing file:
@@ -154,6 +164,7 @@ class ImagingFile(object):
       >>> exists = ImagingFile()
       >>> exists.writeto('utest2.fits', True)
       >>> inp = ImagingFile.fromfilename('utest2.fits')
+      >>> import os
       >>> os.remove('utest2.fits')
       >>> assert len(inp.datatables) == len(exists.datatables)
       >>> for key in exists.inparam:
@@ -169,6 +180,7 @@ class ImagingFile(object):
       >>> with fits.open('utest3.fits') as hdulist:
       ...     len(hdulist)
       2
+      >>> import os
       >>> os.remove('utest3.fits')
 
       The following sets the prior image. There should be 3 HDUs in
@@ -183,6 +195,7 @@ class ImagingFile(object):
       >>> with fits.open('utest4.fits') as hdulist:
       ...     len(hdulist)
       3
+      >>> import os
       >>> os.remove('utest4.fits')
 
     """
@@ -260,23 +273,12 @@ class ImagingFile(object):
         self._priorimg = img
         self.inparam['RGL_PRIO'] = img.name
 
-    def reprheader(self, header):
-        if header is None:
-            return repr(header)
-        ret = "["
-        for key in header:
-            if key not in ['COMMENT', 'HISTORY']:
-                ret += "%s=%r, " % (key, header[key])
-        ret = ret.rstrip(' ,') + "]"
-        return ret
-
     def __repr__(self):
         ret = "ImagingFile("
         ret += ("dataheader=%s, datatables=%r, " %
-                (self.reprheader(self.dataheader), self.datatables))
+                (_reprheader(self.dataheader), self.datatables))
         ret += ("inparam=%s, outparam=%s, " %
-                (self.reprheader(self.inparam),
-                 self.reprheader(self.outparam)))
+                (_reprheader(self.inparam), _reprheader(self.outparam)))
         ret += ("initimg=%r, priorimg=%r" %
                 (self.initimg, self.priorimg))
         ret += ")"
