@@ -10,6 +10,7 @@ Attributes:
   OUTPUT_PARAM_NAME (str): EXTNAME of output parameters HDU.
   RESERVED_KEYWORDS (list): FITS keywords that aren't imaging parameters.
   DEFAULT_PARAM = (list of tuples (keyword, value)): Default input parameters.
+  PARAM_COMMENTS = (dict): Default comments for input parameters.
 
 """
 
@@ -29,6 +30,16 @@ RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
 DEFAULT_PARAM = [('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
                  ('USE_VIS', True), ('USE_VIS2', True), ('USE_T3', True),
                  ('MAXITER', 200), ('RGL_NAME', 'mem_prior'), ('RGL_WGT', 1e5)]
+PARAM_COMMENTS = {'WAVE_MIN': '[m] Minimum wavelength to select',
+                  'WAVE_MAX': '[m] Maximum wavelength to select',
+                  'USE_VIS': 'Use complex visibility data if any',
+                  'USE_VIS2': 'Use squared visibility data if any',
+                  'USE_T3': 'Use triple product data if any',
+                  'INIT_IMG': 'HDUNAME of initial image',
+                  'MAXITER': 'Maximum number of iterations to run',
+                  'RGL_NAME': 'Name of the regularization method',
+                  'RGL_WGT': 'Weight of the regularization',
+                  'RGL_PRIO': 'HDUNAME of prior image'}
 
 
 def mergeheaders(headers):
@@ -298,14 +309,26 @@ class ImagingFile(object):
             ret += "---"
         return ret
 
+    def _set_param_comments(self):
+        for key in self.inparam:
+            try:
+                if self.inparam.comments[key] == '':
+                    self.inparam.comments[key] = PARAM_COMMENTS[key]
+            except KeyError:
+                pass
+        # :TODO: set comments for output parameters
+
     def writeto(self, filename, clobber=False):
         """Write object's data to file.
+
+        Sets comments for standard input parameters.
 
         Args:
           filename (str): Filename for result.
           clobber (bool): Specifies whether existing file should be
                           overwritten, optional.
         """
+        self._set_param_comments()
         if self.initimg is not None:
             hdulist = fits.HDUList(self.initimg.make_primary_hdu())
         else:
