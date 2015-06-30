@@ -137,6 +137,7 @@ class GreyImg(object):
         'RA'
         >>> hdulist[0].header['CTYPE2']
         'DEC'
+        >>> hdulist.close()
         >>> os.remove('utest.fits')
 
         """
@@ -206,6 +207,7 @@ class GreyImg(object):
           KeyError: "Keyword 'EXTNAME' not found."
           >>> np.all(hdulist[0].data == img.image)
           True
+          >>> hdulist.close()
           >>> os.remove('utest.fits')
 
         """
@@ -236,6 +238,7 @@ class GreyImg(object):
           'test'
           >>> np.all(hdulist[1].data == img.image)
           True
+          >>> hdulist.close()
           >>> os.remove('utest.fits')
 
         """
