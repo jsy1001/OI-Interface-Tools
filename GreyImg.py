@@ -11,7 +11,6 @@ Attributes:
 from __future__ import division, print_function
 
 from math import pi, exp, log
-import os
 
 import numpy as np
 from astropy.io import fits
@@ -138,6 +137,7 @@ class GreyImg(object):
         >>> hdulist[0].header['CTYPE2']
         'DEC'
         >>> hdulist.close()
+        >>> import os
         >>> os.remove('utest.fits')
 
         """
@@ -208,6 +208,7 @@ class GreyImg(object):
           >>> np.all(hdulist[0].data == img.image)
           True
           >>> hdulist.close()
+          >>> import os
           >>> os.remove('utest.fits')
 
         """
@@ -239,6 +240,7 @@ class GreyImg(object):
           >>> np.all(hdulist[1].data == img.image)
           True
           >>> hdulist.close()
+          >>> import os
           >>> os.remove('utest.fits')
 
         """
