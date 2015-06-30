@@ -163,7 +163,27 @@ class ImagingFile(object):
 
       >>> inp = ImagingFile()
       >>> inp.initimg = GreyImg(INIT_IMG_NAME, 64, 64, 0.25)
+      >>> assert inp.priorimg is None
       >>> assert inp.inparam['INIT_IMG'] == INIT_IMG_NAME
+      >>> inp.writeto('utest3.fits', True)
+      >>> with fits.open('utest3.fits') as hdulist:
+      ...     len(hdulist)
+      2
+      >>> os.remove('utest3.fits')
+
+      The following sets the prior image. There should be 3 HDUs in
+      the resulting FITS file: the empty primary HDU, an image HDU
+      containing the prior image, and a binary table containing the
+      input parameters:
+
+      >>> inp = ImagingFile()
+      >>> inp.priorimg = GreyImg(PRIOR_IMG_NAME, 64, 64, 0.25)
+      >>> assert inp.inparam['RGL_PRIO'] == PRIOR_IMG_NAME
+      >>> inp.writeto('utest4.fits', True)
+      >>> with fits.open('utest4.fits') as hdulist:
+      ...     len(hdulist)
+      3
+      >>> os.remove('utest4.fits')
 
     """
 
@@ -230,7 +250,7 @@ class ImagingFile(object):
         """Return prior image object."""
         return self._priorimg
 
-    @initimg.setter
+    @priorimg.setter
     def priorimg(self, img):
         """Set prior image object.
 
