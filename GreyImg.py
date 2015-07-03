@@ -5,6 +5,7 @@ GreyImg class.
 
 Attributes:
   MAS_TO_DEG (float): Conversion factor from milliarcseconds to degrees.
+  INPUT_PARAM_NAME (str): EXTNAME of input parameters HDU.
 
 """
 
@@ -87,8 +88,8 @@ class GreyImg(object):
         """Initialise GreyImg from an image reconstruction input file.
 
         Args:
-           filename (str): input filename.
-           hdunamekey (str): input parameter keyword giving HDUNAME of image.
+           filename (str): Input filename.
+           hdunamekey (str): Input parameter keyword giving HDUNAME of image.
 
         Raises:
           TypeError: HDU referenced by INIT_IMG parameter is not an image HDU.
