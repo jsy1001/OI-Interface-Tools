@@ -33,10 +33,10 @@ def create(args):
         initimg.add_dirac(args.naxis1 / 2, args.naxis1 / 2, 1.0)
     elif args.modeltype == 'uniform':
         initimg.add_uniform_disk(args.naxis1 / 2, args.naxis1 / 2, 1.0,
-                                 args.modelwidth / args.cdelt1)
+                                 args.modelwidth / args.pixelsize)
     elif args.modeltype == 'gaussian':
         initimg.add_gaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
-                             args.modelwidth / args.cdelt1)
+                             args.modelwidth / args.pixelsize)
     result.initimg = initimg
 
     result.writeto(args.inputfile, clobber=args.overwrite)
