@@ -113,7 +113,8 @@ class GreyImg(object):
             except KeyError:
                 raise KeyError("CDELT1/2 keywords missing, pixelsize unknown")
             if cdelt1 != cdelt2:
-                raise ValueError("Image does not have square pixels")
+                raise ValueError("Image pixels are not square " +
+                                 "(CDELT1=%f, CDELT2=%f)" % (cdelt1, cdelt2))
             self = cls(name, naxis1, naxis2, cdelt1 / MAS_TO_DEG,
                        imghdu.header)
             self.image = imghdu.data
