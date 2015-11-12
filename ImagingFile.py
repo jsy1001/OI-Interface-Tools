@@ -27,10 +27,11 @@ OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
 RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
                      'PCOUNT', 'GCOUNT', 'TFIELDS',
                      'EXTNAME', 'EXTVER', 'HDUNAME', 'HDUVER']
-DEFAULT_PARAM = [('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
+DEFAULT_PARAM = [('TARGET', None), ('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
                  ('USE_VIS', True), ('USE_VIS2', True), ('USE_T3', True),
                  ('MAXITER', 200), ('RGL_NAME', 'mem_prior'), ('RGL_WGT', 1e5)]
-PARAM_COMMENTS = {'WAVE_MIN': '[m] Minimum wavelength to select',
+PARAM_COMMENTS = {'TARGET': 'Identifier of target to select',
+                  'WAVE_MIN': '[m] Minimum wavelength to select',
                   'WAVE_MAX': '[m] Maximum wavelength to select',
                   'USE_VIS': 'Use complex visibility data if any',
                   'USE_VIS2': 'Use squared visibility data if any',
@@ -157,7 +158,7 @@ class ImagingFile(object):
           ...
       KeyError: "Keyword 'INIT_IMG' not found."
       >>> for key, value in DEFAULT_PARAM:
-      ...     assert inp.inparam[key] == value
+      ...     assert value is None or inp.inparam[key] == value
       >>> inp.initimg
       >>> inp.priorimg
 
