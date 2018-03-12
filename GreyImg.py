@@ -9,8 +9,6 @@ Attributes:
 
 """
 
-from __future__ import division, print_function
-
 from math import pi, exp, log
 
 import numpy as np
@@ -132,7 +130,7 @@ class GreyImg(object):
 
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.setwcs(ctype=['RA', 'DEC'])
-        >>> img.make_primary_hdu().writeto('utest.fits', clobber=True)
+        >>> img.make_primary_hdu().writeto('utest.fits', overwrite=True)
         >>> hdulist = fits.open('utest.fits')
         >>> hdulist[0].header['CTYPE1']
         'RA'
@@ -143,7 +141,7 @@ class GreyImg(object):
         >>> os.remove('utest.fits')
 
         """
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self._wcs.wcs, key, value)
 
     @property
@@ -197,7 +195,7 @@ class GreyImg(object):
           The following uses this method to create a FITS image file:
 
           >>> img = GreyImg('test', 64, 64, 0.25)
-          >>> img.make_primary_hdu().writeto('utest.fits', clobber=True)
+          >>> img.make_primary_hdu().writeto('utest.fits', overwrite=True)
           >>> hdulist = fits.open('utest.fits')
           >>> len(hdulist)
           1
@@ -231,7 +229,7 @@ class GreyImg(object):
           >>> img = GreyImg('test', 64, 64, 0.25)
           >>> hdulist = fits.HDUList(fits.PrimaryHDU())
           >>> hdulist.append(img.make_image_hdu())
-          >>> hdulist.writeto('utest.fits', clobber=True)
+          >>> hdulist.writeto('utest.fits', overwrite=True)
           >>> hdulist = fits.open('utest.fits')
           >>> len(hdulist)
           2
@@ -292,7 +290,7 @@ class GreyImg(object):
         True
 
         """
-        self.image[np.rint(ypos)][np.rint(xpos)] += flux
+        self.image[int(np.rint(ypos))][int(np.rint(xpos))] += flux
 
     def add_uniform_disk(self, xpos, ypos, flux, diameter):
         """Add a circular uniform disk component to the current image.

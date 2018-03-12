@@ -1,7 +1,5 @@
 """Python module to extend astropy.io.fits."""
 
-from __future__ import division, print_function
-
 from astropy.io import fits
 
 

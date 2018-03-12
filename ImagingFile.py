@@ -14,8 +14,6 @@ Attributes:
 
 """
 
-from __future__ import division, print_function
-
 from astropy.io import fits
 
 from GreyImg import GreyImg
@@ -147,10 +145,8 @@ class ImagingFile(object):
 
       >>> inp = ImagingFile()
       >>> assert repr(inp).startswith('ImagingFile(')
-      >>> inp.dataheader.keys()
-      []
-      >>> inp.datatables
-      []
+      >>> len(inp.datatables)
+      0
       >>> inp.inparam['EXTNAME'] == INPUT_PARAM_NAME
       True
       >>> inp.inparam['INIT_IMG']
@@ -319,15 +315,15 @@ class ImagingFile(object):
                 pass
         # :TODO: set comments for output parameters
 
-    def writeto(self, filename, clobber=False):
+    def writeto(self, filename, overwrite=False):
         """Write object's data to file.
 
         Sets comments for standard input parameters.
 
         Args:
           filename (str): Filename for result.
-          clobber (bool): Specifies whether existing file should be
-                          overwritten, optional.
+          overwrite (bool): Specifies whether existing file should be
+                            overwritten, optional.
         """
         self._set_param_comments()
         if self.initimg is not None:
@@ -347,7 +343,7 @@ class ImagingFile(object):
         if self.outparam is not None:
             hdulist.append(fits.BinTableHDU(header=self.outparam))
 
-        hdulist.writeto(filename, clobber=clobber)
+        hdulist.writeto(filename, overwrite=overwrite)
 
 
 if __name__ == "__main__":

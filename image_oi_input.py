@@ -1,8 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 """Python script to manage OI imaging input files."""
-
-from __future__ import division, print_function
 
 import argparse
 import sys
@@ -39,7 +37,7 @@ def create(args):
                              args.modelwidth / args.pixelsize)
     result.initimg = initimg
 
-    result.writeto(args.inputfile, clobber=args.overwrite)
+    result.writeto(args.inputfile, overwrite=args.overwrite)
 
 
 def copyinit(args):
@@ -57,7 +55,7 @@ def copyinit(args):
                           args.inputfile) + "hence pixelsize not defined")
             result.initimg.image = imghdulist[0].data
             result.initimg.normalise()
-            result.writeto(args.inputfile, clobber=True)
+            result.writeto(args.inputfile, overwrite=True)
     except IOError as e:
         sys.exit(e)
 
@@ -84,7 +82,7 @@ def copyprior(args):
                                           result.initimg.pixelsize)
             result.priorimg.image = imghdulist[0].data
             result.priorimg.normalise()
-            result.writeto(args.inputfile, clobber=True)
+            result.writeto(args.inputfile, overwrite=True)
     except IOError as e:
         sys.exit(e)
 
@@ -95,7 +93,7 @@ def edit(args):
         result = ImagingFile.fromfilename(args.inputfile)
         for key, value in args.param:
             result.inparam[key] = value
-        result.writeto(args.inputfile, clobber=True)
+        result.writeto(args.inputfile, overwrite=True)
     except IOError as e:
         sys.exit(e)
 
