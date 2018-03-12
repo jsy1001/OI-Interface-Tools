@@ -5,10 +5,10 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from HDUListPlus import HDUListPlus
-from GreyImg import MAS_TO_DEG
-from ImagingFile import DEFAULT_PARAM, INPUT_PARAM_NAME
-from image_oi_input import create_parser
+from imageoi.HDUListPlus import HDUListPlus
+from imageoi.GreyImg import MAS_TO_DEG
+from imageoi.ImagingFile import DEFAULT_PARAM, INPUT_PARAM_NAME
+from imageoi.tool.__main__ import create_parser
 
 
 class ImageOiInputTestCase(unittest.TestCase):

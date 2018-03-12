@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Python script to manage OI imaging input files."""
 
 import argparse
@@ -8,8 +6,8 @@ import os.path
 
 from astropy.io import fits
 
-from ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
-from GreyImg import GreyImg
+from ..ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
+from ..GreyImg import GreyImg
 
 
 def create(args):
@@ -193,10 +191,13 @@ def create_parser():
 
 
 def main():
-    """image-oi-input.py main function."""
+    """Main function."""
     parser = create_parser()
     args = parser.parse_args()
-    args.func(args)
+    try:
+        args.func(args)
+    except AttributeError:
+        parser.print_usage()
 
 
 if __name__ == '__main__':

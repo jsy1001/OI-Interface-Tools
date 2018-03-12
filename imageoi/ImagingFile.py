@@ -16,7 +16,7 @@ Attributes:
 
 from astropy.io import fits
 
-from GreyImg import GreyImg
+from imageoi.GreyImg import GreyImg
 
 INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
 PRIOR_IMG_NAME = 'IMAGE-OI PRIOR IMAGE'
@@ -58,6 +58,8 @@ def mergeheaders(headers):
 
       The following merges two headers:
 
+      >>> from astropy.io import fits
+      >>> from imageoi.ImagingFile import INIT_IMG_NAME, mergeheaders
       >>> a = fits.Header()
       >>> a['TELESCOP'] = 'CHARA'
       >>> a['HISTORY'] = 'a first history line'
@@ -136,13 +138,15 @@ class ImagingFile(object):
       datatables (list): HDUs from OIFITS file.
       inparam (fits.Header): Scalar input parameters.
       outparam (fits.Header or None): Scalar output parameters.
-      initimg (GreyImage or None): Initial image object.
-      priorimg (GreyImage or None): Prior image object.
+      initimg (GreyImg or None): Initial image object.
+      priorimg (GreyImg or None): Prior image object.
 
     Examples:
 
       The following creates a (useless) input file object without OIFITS data.
 
+      >>> from imageoi.ImagingFile import ImagingFile
+      >>> from imageoi.ImagingFile import INPUT_PARAM_NAME, DEFAULT_PARAM
       >>> inp = ImagingFile()
       >>> assert repr(inp).startswith('ImagingFile(')
       >>> len(inp.datatables)
@@ -160,7 +164,11 @@ class ImagingFile(object):
 
       The following creates an input file object from OIFITS data.
 
-      >>> inp = ImagingFile('tests/Bin_Ary--MIRC_H.fits')
+      >>> import os.path
+      >>> from imageoi.ImagingFile import ImagingFile
+      >>> filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+      ...                         '..', 'tests', 'Bin_Ary--MIRC_H.fits')
+      >>> inp = ImagingFile(filename)
       >>> len(inp.datatables)
       5
       >>> inp.writeto('utest1.fits', True)
@@ -169,6 +177,7 @@ class ImagingFile(object):
 
       The following creates an imaging file object from an existing file:
 
+      >>> from imageoi.ImagingFile import ImagingFile
       >>> exists = ImagingFile()
       >>> exists.writeto('utest2.fits', True)
       >>> inp = ImagingFile.fromfilename('utest2.fits')
@@ -180,6 +189,9 @@ class ImagingFile(object):
 
       The following sets the initial image:
 
+      >>> from astropy.io import fits
+      >>> from imageoi.GreyImg import GreyImg
+      >>> from imageoi.ImagingFile import ImagingFile, INIT_IMG_NAME
       >>> inp = ImagingFile()
       >>> inp.initimg = GreyImg(INIT_IMG_NAME, 64, 64, 0.25)
       >>> assert inp.priorimg is None
@@ -196,6 +208,9 @@ class ImagingFile(object):
       containing the prior image, and a binary table containing the
       input parameters:
 
+      >>> from astropy.io import fits
+      >>> from imageoi.GreyImg import GreyImg
+      >>> from imageoi.ImagingFile import ImagingFile, PRIOR_IMG_NAME
       >>> inp = ImagingFile()
       >>> inp.priorimg = GreyImg(PRIOR_IMG_NAME, 64, 64, 0.25)
       >>> assert inp.inparam['RGL_PRIO'] == PRIOR_IMG_NAME

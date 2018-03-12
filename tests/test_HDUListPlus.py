@@ -5,7 +5,7 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from HDUListPlus import HDUListPlus
+from imageoi.HDUListPlus import HDUListPlus
 
 
 class HDUListPlusTestCase(unittest.TestCase):
