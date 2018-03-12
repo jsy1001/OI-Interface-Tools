@@ -126,8 +126,8 @@ def create_parser():
     """Return new ArgumentParser instance for this script."""
 
     # Create top-level parser for command line arguments
-    parser = argparse.ArgumentParser(description=
-                                     'Manage OI imaging input files')
+    parser = argparse.ArgumentParser(
+        description='Manage OI imaging input files')
     subparsers = parser.add_subparsers(help='sub-command help')
 
     # Create parser for the "create" command
@@ -143,12 +143,13 @@ def create_parser():
                                help='Image dimension (naxis2 == naxis1)')
     parser_create.add_argument('pixelsize', type=float,
                                help='Pixel size /mas')
-    parser_create.add_argument('-mt', '--modeltype', default='blank',
-                               choices=['blank',
-                                        'dirac', 'uniform', 'gaussian'],
-                               help='Initial image model type')
-    parser_create.add_argument('-mw', '--modelwidth', type=float, default=10.0,
-                               help='Initial image model width /mas')
+    parser_create.add_argument(
+        '-mt', '--modeltype', default='blank',
+        choices=['blank', 'dirac', 'uniform', 'gaussian'],
+        help='Initial image model type')
+    parser_create.add_argument(
+        '-mw', '--modelwidth', type=float, default=10.0,
+        help='Initial image model width /mas')
     # :TODO: prior image (use GreyImg class)
     # Note dimensions and pixel size must match initial image
     parser_create.add_argument('param', nargs='*', type=parse_keyword,
@@ -156,21 +157,21 @@ def create_parser():
     parser_create.set_defaults(func=create)
 
     # Create parser for the "copyinit" command
-    parser_copyinit = subparsers.add_parser('copyinit', help=
-                                            'copy initial image from file')
-    parser_copyinit.add_argument('inputfile',
-                                 help='FITS file to modify')
-    parser_copyinit.add_argument('imagefile', help=
-                                 'FITS file with initial image in primary HDU')
+    parser_copyinit = subparsers.add_parser(
+        'copyinit', help='copy initial image from file')
+    parser_copyinit.add_argument(
+        'inputfile', help='FITS file to modify')
+    parser_copyinit.add_argument(
+        'imagefile', help='FITS file with initial image in primary HDU')
     parser_copyinit.set_defaults(func=copyinit)
 
     # Create parser for the "copyprior" command
-    parser_copyprior = subparsers.add_parser('copyprior', help=
-                                             'copy prior image from file')
-    parser_copyprior.add_argument('inputfile',
-                                  help='FITS file to modify')
-    parser_copyprior.add_argument('imagefile', help=
-                                  'FITS file with prior image in primary HDU')
+    parser_copyprior = subparsers.add_parser(
+        'copyprior', help='copy prior image from file')
+    parser_copyprior.add_argument(
+        'inputfile', help='FITS file to modify')
+    parser_copyprior.add_argument(
+        'imagefile', help='FITS file with prior image in primary HDU')
     parser_copyprior.set_defaults(func=copyprior)
 
     # Create parser for the "edit" command
