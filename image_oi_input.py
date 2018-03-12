@@ -58,8 +58,8 @@ def copyinit(args):
             result.initimg.image = imghdulist[0].data
             result.initimg.normalise()
             result.writeto(args.inputfile, clobber=True)
-    except IOError, msg:
-        sys.exit(msg)
+    except IOError as e:
+        sys.exit(e)
 
 
 def copyprior(args):
@@ -85,8 +85,8 @@ def copyprior(args):
             result.priorimg.image = imghdulist[0].data
             result.priorimg.normalise()
             result.writeto(args.inputfile, clobber=True)
-    except IOError, msg:
-        sys.exit(msg)
+    except IOError as e:
+        sys.exit(e)
 
 
 def edit(args):
@@ -96,8 +96,8 @@ def edit(args):
         for key, value in args.param:
             result.inparam[key] = value
         result.writeto(args.inputfile, clobber=True)
-    except IOError, msg:
-        sys.exit(msg)
+    except IOError as e:
+        sys.exit(e)
 
 
 def show(args):
@@ -105,8 +105,8 @@ def show(args):
     try:
         toshow = ImagingFile.fromfilename(args.inputfile)
         print(toshow)
-    except IOError, msg:
-        sys.exit(msg)
+    except IOError as e:
+        sys.exit(e)
 
 
 def parse_keyword(arg):
