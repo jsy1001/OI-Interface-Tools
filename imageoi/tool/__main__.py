@@ -6,8 +6,9 @@ import os.path
 
 from astropy.io import fits
 
-from ..ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
-from ..GreyImg import GreyImg
+from imageoi import __version__
+from imageoi.ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
+from imageoi.GreyImg import GreyImg
 
 
 def create(args):
@@ -124,6 +125,7 @@ def create_parser():
     # Create top-level parser for command line arguments
     parser = argparse.ArgumentParser(
         description='Manage OI imaging input files')
+    parser.add_argument('--version', action='version', version=__version__)
     subparsers = parser.add_subparsers(help='sub-command help')
 
     # Create parser for the "create" command

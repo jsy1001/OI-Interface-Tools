@@ -11,7 +11,7 @@ from imageoi.ImagingFile import DEFAULT_PARAM, INPUT_PARAM_NAME
 from imageoi.tool.__main__ import create_parser
 
 
-class ImageOiInputTestCase(unittest.TestCase):
+class ImageOiToolTestCase(unittest.TestCase):
 
     def setUp(self):
         self.parser = create_parser()
@@ -29,6 +29,12 @@ class ImageOiInputTestCase(unittest.TestCase):
                                        self.datafile, inputfile,
                                        str(naxis1), str(pixelsize)] + param)
         args.func(args)
+
+    def test_version(self):
+        """Test '--version' argument"""
+        with self.assertRaises(SystemExit) as cm:
+            self.parser.parse_args(['--version'])
+            self.assertEqual(cm.exception.code, 0)
 
     def test_create_exists(self):
         """
