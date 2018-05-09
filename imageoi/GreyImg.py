@@ -6,6 +6,7 @@ GreyImg class.
 Attributes:
   MAS_TO_DEG (float): Conversion factor from milliarcseconds to degrees.
   INPUT_PARAM_NAME (str): EXTNAME of input parameters HDU.
+  OUTPUT_PARAM_NAME (str): EXTNAME of output parameters HDU.
 
 """
 
@@ -19,6 +20,7 @@ from imageoi.HDUListPlus import HDUListPlus
 
 MAS_TO_DEG = 1/3600/1000
 INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
+OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
 
 
 class GreyImg(object):
@@ -84,11 +86,38 @@ class GreyImg(object):
                                pixelsize * MAS_TO_DEG]
 
     @classmethod
+    def _fromimagehdu(cls, imghdu):
+        """Initialise GreyImg from a FITS primary or image HDU.
+
+        Args:
+          imghdu (fits.PrimaryHDU or fits.ImageHDU): FITS HDU to read.
+
+        Raises:
+          KeyError: WCS keywords giving pixelsize are missing.
+          ValueError: Image does not have square pixels.
+
+        """
+        name = imghdu.header['HDUNAME']
+        naxis1 = imghdu.data.shape[1]
+        naxis2 = imghdu.data.shape[0]
+        try:
+            cdelt1 = imghdu.header['CDELT1']
+            cdelt2 = imghdu.header['CDELT2']
+        except KeyError:
+            raise KeyError("CDELT1/2 keywords missing, pixelsize unknown")
+        if cdelt1 != cdelt2:
+            raise ValueError("Image pixels are not square " +
+                             "(CDELT1=%f, CDELT2=%f)" % (cdelt1, cdelt2))
+        self = cls(name, naxis1, naxis2, cdelt1 / MAS_TO_DEG, imghdu.header)
+        self.image = imghdu.data
+        return self
+
+    @classmethod
     def frominputfilename(cls, filename, hdunamekey='INIT_IMG'):
         """Initialise GreyImg from an image reconstruction input file.
 
         Args:
-           filename (str): Input filename.
+           filename (str): FITS file to read.
            hdunamekey (str): Input parameter keyword giving HDUNAME of image.
 
         Raises:
@@ -104,21 +133,30 @@ class GreyImg(object):
             if not isinstance(imghdu, (fits.PrimaryHDU, fits.ImageHDU)):
                 raise TypeError("Not an image HDU: '%s' referenced by %s" %
                                 (param[hdunamekey], hdunamekey))
-            name = imghdu.header['HDUNAME']
-            naxis1 = imghdu.data.shape[1]
-            naxis2 = imghdu.data.shape[0]
-            try:
-                cdelt1 = imghdu.header['CDELT1']
-                cdelt2 = imghdu.header['CDELT2']
-            except KeyError:
-                raise KeyError("CDELT1/2 keywords missing, pixelsize unknown")
-            if cdelt1 != cdelt2:
-                raise ValueError("Image pixels are not square " +
-                                 "(CDELT1=%f, CDELT2=%f)" % (cdelt1, cdelt2))
-            self = cls(name, naxis1, naxis2, cdelt1 / MAS_TO_DEG,
-                       imghdu.header)
-            self.image = imghdu.data
-            return self
+            return cls._fromimagehdu(imghdu)
+
+    @classmethod
+    def fromoutputfilename(cls, filename, hdunamekey='LAST_IMG'):
+        """Initialise GreyImg from an image reconstruction output file.
+
+        Args:
+           filename (str): FITS file to read.
+           hdunamekey (str): Output parameter keyword giving HDUNAME of image.
+
+        Raises:
+          TypeError: HDU referenced by LAST_IMG parameter is not an image HDU.
+          KeyError: WCS keywords giving pixelsize are missing.
+          ValueError: Image does not have square pixels.
+
+        """
+        with fits.open(filename) as hdulist:
+            hdulist.__class__ = HDUListPlus
+            param = hdulist[OUTPUT_PARAM_NAME].header
+            imghdu = hdulist[param[hdunamekey]]
+            if not isinstance(imghdu, (fits.PrimaryHDU, fits.ImageHDU)):
+                raise TypeError("Not an image HDU: '%s' referenced by %s" %
+                                (param[hdunamekey], hdunamekey))
+            return cls._fromimagehdu(imghdu)
 
     def setwcs(self, **kwargs):
         """Set World Coordinate System attributes.
