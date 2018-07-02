@@ -16,7 +16,7 @@ class ImageOiToolTestCase(unittest.TestCase):
     def setUp(self):
         self.parser = create_parser()
         self.tempResult = tempfile.NamedTemporaryFile(suffix='.fits',
-                                                      delete=False)
+                                                      mode='wb', delete=False)
         self.datafile = 'tests/Bin_Ary--MIRC_H.fits'
 
     def tearDown(self):
@@ -74,7 +74,8 @@ class ImageOiToolTestCase(unittest.TestCase):
         """Test initial image copy from primary HDU"""
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
-        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
+        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
+                                                delete=False)
         pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
         pri.writeto(tempImage)
         args = self.parser.parse_args(['copyinit', self.tempResult.name,
@@ -94,7 +95,8 @@ class ImageOiToolTestCase(unittest.TestCase):
         """Test prior image copy from primary HDU"""
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
-        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', delete=False)
+        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
+                                                delete=False)
         pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
         pri.writeto(tempImage)
         args = self.parser.parse_args(['copyprior', self.tempResult.name,

@@ -11,7 +11,7 @@ from imageoi.HDUListPlus import HDUListPlus
 class HDUListPlusTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.tempFits = tempfile.NamedTemporaryFile(suffix='.fits',
+        self.tempFits = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
                                                     delete=False)
         pri = fits.PrimaryHDU(data=np.zeros((64, 64)))
         ext = fits.BinTableHDU()

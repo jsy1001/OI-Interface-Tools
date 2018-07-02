@@ -37,7 +37,7 @@ class ImgenTestCase(unittest.TestCase):
         """Test image generation"""
         naxis1 = 128
         pixelsize = 0.5
-        args = self.parser.parse_args([self.tempResult.name,
+        args = self.parser.parse_args(['--overwrite', self.tempResult.name,
                                        str(naxis1), str(pixelsize)])
         generate(args)
         with fits.open(self.tempResult.name) as hdulist:
