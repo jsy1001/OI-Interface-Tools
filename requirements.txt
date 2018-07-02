@@ -1,3 +1,3 @@
 numpy
 astropy
-pbr
+pbr>=4.0.0

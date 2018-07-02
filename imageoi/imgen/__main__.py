@@ -4,8 +4,6 @@ import argparse
 import sys
 import os.path
 
-from astropy.io import fits
-
 from imageoi import __version__
 from imageoi.ImagingFile import INIT_IMG_NAME
 from imageoi.GreyImg import GreyImg

@@ -1,3 +1,4 @@
-import pbr.version
+from pbr.version import VersionInfo
 
-__version__ = pbr.version.VersionInfo('OI-Interface-Tools').version_string()
+_v = VersionInfo('OI-Interface-Tools').semantic_version()
+__version__ = _v.release_string()
