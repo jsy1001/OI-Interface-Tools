@@ -4,12 +4,13 @@ from astropy.io import fits
 
 
 class HDUListPlus(fits.HDUList):
-
     """Extension of fits.HDUList for lookup by HDUNAME/HDUVER keywords."""
 
     def __getitem__(self, index):
-        """Lookup HDU by position, EXTNAME, (EXTNAME, EXTVER), HDUNAME, or
-        (HDUNAME, HDUVER).
+        """Lookup an HDU by various kinds of index.
+
+        index may be any of position, EXTNAME, (EXTNAME, EXTVER),
+        HDUNAME, or (HDUNAME, HDUVER).
 
         The latter two options are extensions implemented by the
         HDUListPlus class.

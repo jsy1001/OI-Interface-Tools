@@ -24,7 +24,6 @@ OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
 
 
 class GreyImg(object):
-
     """OI image reconstruction greyscale image class.
 
     Args:
@@ -229,7 +228,7 @@ class GreyImg(object):
         return ret
 
     def issquare(self):
-        """Does image have the same dimension in both axes?"""
+        """Check whether image has the same dimension in both axes."""
         return self.naxis1 == self.naxis2
 
     def make_primary_hdu(self):

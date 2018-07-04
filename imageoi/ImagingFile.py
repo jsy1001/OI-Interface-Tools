@@ -127,7 +127,6 @@ def _reprheader(header):
 
 
 class ImagingFile(object):
-
     """OI image reconstruction input/output file class.
 
     Args:
