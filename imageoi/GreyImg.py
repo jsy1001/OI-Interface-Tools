@@ -402,6 +402,42 @@ class GreyImg(object):
                 rsq = (ix - xpos)**2 + (iy - ypos)**2
                 self.image[iy][ix] += peak * exp(-4 * log(2) * rsq / fwhm**2)
 
+    def add_hestroffer_disk(self, xpos, ypos, flux, diameter, alpha):
+        """Add a circular limb-darkened disk component to the current image.
+
+        Uses the ad-hoc model of Hestroffer (1997) A&A 327, 199.
+
+        Args:
+          xpos (float): Component position on first (fast) FITS axis /pix.
+          ypos (float): Component position on second (slow) FITS axis /pix.
+          flux (float): Integrated flux of component.
+          diameter (float): Disk diameter /pix.
+          alpha (float): Limb-darkening parameter.
+
+        Example:
+
+        >>> import numpy as np
+        >>> from imageoi.GreyImg import GreyImg
+        >>> img = GreyImg('test', 64, 64, 0.25)
+        >>> img.add_hestroffer_disk(12.0, 37.0, 0.5, 11, 0.5)
+        >>> np.all(np.argmax(img.image, axis=1) == 12)
+        True
+        >>> np.all(np.argmax(img.image, axis=0) == 37)
+        True
+        >>> img.add_hestroffer_disk(13.5, 42.8, 0.25, 11, 2.2)
+        >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
+        True
+
+        """
+        peak = flux * (4 + 2*alpha) / (pi*diameter**2)
+        radius = diameter / 2
+        for iy in range(self.naxis2):
+            for ix in range(self.naxis1):
+                r = np.sqrt((ix - xpos)**2 + (iy - ypos)**2)
+                if r <= radius:
+                    mu = np.sqrt(1.0 - (2.0*r/diameter)**2)
+                    self.image[iy][ix] += peak * mu**alpha
+
 
 if __name__ == "__main__":
     import doctest

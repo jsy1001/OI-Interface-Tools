@@ -49,6 +49,22 @@ class ImgenTestCase(unittest.TestCase):
             self.assertAlmostEqual(imageHdu.header['CDELT2'],
                                    pixelsize * MAS_TO_DEG)
 
+    def test_ld(self):
+        """Test Hestroffer limb-darkened disk"""
+        naxis1 = 128
+        pixelsize = 0.5
+        args = self.parser.parse_args(['--overwrite', self.tempResult.name,
+                                       str(naxis1), str(pixelsize), '-mt=ld'])
+        generate(args)
+        args = self.parser.parse_args(['--overwrite', self.tempResult.name,
+                                       str(naxis1), str(pixelsize), '-mt=ld',
+                                       '-mw=10.5'])
+        generate(args)
+        args = self.parser.parse_args(['--overwrite', self.tempResult.name,
+                                       str(naxis1), str(pixelsize), '-mt=ld',
+                                       '-mw=13.2', '--ldalpha=2.0'])
+        generate(args)
+
 
 if __name__ == '__main__':
     unittest.main()

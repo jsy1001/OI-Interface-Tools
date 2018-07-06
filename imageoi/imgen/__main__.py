@@ -24,6 +24,9 @@ def generate(args):
     elif args.modeltype == 'gaussian':
         img.add_gaussian(args.naxis1 / 2, args.naxis1 / 2, 1.0,
                          args.modelwidth / args.pixelsize)
+    elif args.modeltype == 'ld':
+        img.add_hestroffer_disk(args.naxis1 / 2, args.naxis1 / 2, 1.0,
+                                args.modelwidth / args.pixelsize, args.ldalpha)
     img.make_primary_hdu().writeto(args.imagefile, overwrite=args.overwrite)
 
 
@@ -53,10 +56,12 @@ def create_parser():
     parser.add_argument('pixelsize', type=float,
                         help='Pixel size /mas')
     parser.add_argument('-mt', '--modeltype', default='blank',
-                        choices=['blank', 'dirac', 'uniform', 'gaussian'],
+                        choices=['blank', 'dirac', 'uniform', 'gaussian', 'ld'],
                         help='Image model type')
     parser.add_argument('-mw', '--modelwidth', type=float, default=10.0,
                         help='Initial image model width /mas')
+    parser.add_argument('--ldalpha', type=float, default=1.0,
+                        help='Limb-darkening parameter for -mt ld')
     return parser
 
 
