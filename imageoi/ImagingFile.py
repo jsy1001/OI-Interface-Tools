@@ -26,19 +26,24 @@ RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
                      'PCOUNT', 'GCOUNT', 'TFIELDS',
                      'EXTNAME', 'EXTVER', 'HDUNAME', 'HDUVER']
 DEFAULT_PARAM = [('TARGET', None), ('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
-                 ('USE_VIS', True), ('USE_VIS2', True), ('USE_T3', True),
-                 ('MAXITER', 200), ('RGL_NAME', 'mem_prior'), ('RGL_WGT', 1e5)]
+                 ('USE_VIS', 'ALL'), ('USE_VIS2', True), ('USE_T3', 'ALL'),
+                 ('MAXITER', 200), ('RGL_NAME', 'mem_prior'),
+                 ('AUTO_WGT', False), ('RGL_WGT', 1e5),
+                 ('FLUX', 1.0), ('FLUXERR', 0.0)]
 PARAM_COMMENTS = {'TARGET': 'Identifier of target to select',
                   'WAVE_MIN': '[m] Minimum wavelength to select',
                   'WAVE_MAX': '[m] Maximum wavelength to select',
-                  'USE_VIS': 'Use complex visibility data if any',
+                  'USE_VIS': 'Complex visibility data to use if any',
                   'USE_VIS2': 'Use squared visibility data if any',
-                  'USE_T3': 'Use triple product data if any',
+                  'USE_T3': 'Triple product data to use if any',
                   'INIT_IMG': 'HDUNAME of initial image',
                   'MAXITER': 'Maximum number of iterations to run',
                   'RGL_NAME': 'Name of the regularization method',
+                  'AUTO_WGT': 'Automatic regularization weight',
                   'RGL_WGT': 'Weight of the regularization',
-                  'RGL_PRIO': 'HDUNAME of prior image'}
+                  'RGL_PRIO': 'HDUNAME of prior image',
+                  'FLUX': 'Assumed total flux',
+                  'FLUXERR': 'Error bar for total flux'}
 
 
 def mergeheaders(headers):
