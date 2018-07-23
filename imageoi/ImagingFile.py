@@ -307,17 +307,17 @@ class ImagingFile(object):
         return ret
 
     def __str__(self):
-        ret = "=== %s ===" % INPUT_PARAM_NAME
+        ret = "=== %s ===\n" % INPUT_PARAM_NAME
         for key in self.inparam:
             if key not in RESERVED_KEYWORDS:
-                ret += "%-8s = %s" % (key, self.inparam[key])
-        ret += "---"
+                ret += "%-8s = %s\n" % (key, self.inparam[key])
+        ret += "---\n"
         if self.outparam is not None:
-            ret += "=== %s ===" % OUTPUT_PARAM_NAME
+            ret += "=== %s ===\n" % OUTPUT_PARAM_NAME
             for key in self.outparam:
                 if key not in RESERVED_KEYWORDS:
-                    ret += "%-8s = %s" % (key, self.outparam[key])
-            ret += "---"
+                    ret += "%-8s = %s\n" % (key, self.outparam[key])
+            ret += "---\n"
         return ret
 
     def _set_param_comments(self):
