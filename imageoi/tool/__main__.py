@@ -125,7 +125,8 @@ def create_parser():
     # Create top-level parser for command line arguments
     parser = argparse.ArgumentParser(
         description='Manage OI imaging input files')
-    parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('-V', '--version',
+                        action='version', version=__version__)
     subparsers = parser.add_subparsers(help='sub-command help')
 
     # Create parser for the "create" command
