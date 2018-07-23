@@ -147,25 +147,6 @@ class ImagingFile(object):
 
     Examples:
 
-      The following creates a (useless) input file object without OIFITS data.
-
-      >>> from imageoi.ImagingFile import ImagingFile
-      >>> from imageoi.ImagingFile import INPUT_PARAM_NAME, DEFAULT_PARAM
-      >>> inp = ImagingFile()
-      >>> assert repr(inp).startswith('ImagingFile(')
-      >>> len(inp.datatables)
-      0
-      >>> inp.inparam['EXTNAME'] == INPUT_PARAM_NAME
-      True
-      >>> inp.inparam['INIT_IMG']
-      Traceback (most recent call last):
-          ...
-      KeyError: "Keyword 'INIT_IMG' not found."
-      >>> for key, value in DEFAULT_PARAM:
-      ...     assert value is None or inp.inparam[key] == value
-      >>> inp.initimg
-      >>> inp.priorimg
-
       The following creates an input file object from OIFITS data.
 
       >>> import os.path
