@@ -30,23 +30,12 @@ def generate(args):
     img.make_primary_hdu().writeto(args.imagefile, overwrite=args.overwrite)
 
 
-def parse_keyword(arg):
-    """Parse command line key-value pair."""
-    key, value = arg.split('=')[:2]
-    try:
-        value = int(value)
-    except ValueError:
-        try:
-            value = float(value)
-        except ValueError:
-            pass
-    return key, value
-
 
 def create_parser():
     """Return new ArgumentParser instance for this script."""
     parser = argparse.ArgumentParser(description='Generate model image')
-    parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('-V', '--version',
+                        action='version', version=__version__)
     parser.add_argument('-o', '--overwrite', action='store_true',
                         help='Overwrite existing file')
     parser.add_argument('imagefile',
