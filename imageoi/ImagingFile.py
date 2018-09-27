@@ -209,6 +209,7 @@ class ImagingFile(object):
     """
 
     def __init__(self, datafilename=None):
+        """Initialise ImagingFile from OIFITS data."""
         self.dataheader = fits.Header()
         self.datatables = []
         self.inparam = fits.Header()

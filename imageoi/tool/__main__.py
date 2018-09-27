@@ -121,7 +121,6 @@ def parse_keyword(arg):
 
 def create_parser():
     """Return new ArgumentParser instance for this script."""
-
     # Create top-level parser for command line arguments
     parser = argparse.ArgumentParser(
         description='Manage OI imaging input files')

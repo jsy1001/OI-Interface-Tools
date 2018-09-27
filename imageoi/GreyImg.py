@@ -72,6 +72,7 @@ class GreyImg(object):
     """
 
     def __init__(self, name, naxis1, naxis2, pixelsize, wcsheader=None):
+        """Initialise a blank GreyImg."""
         self.name = name
         self.naxis1 = naxis1
         self.naxis2 = naxis2

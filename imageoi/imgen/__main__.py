@@ -30,7 +30,6 @@ def generate(args):
     img.make_primary_hdu().writeto(args.imagefile, overwrite=args.overwrite)
 
 
-
 def create_parser():
     """Return new ArgumentParser instance for this script."""
     parser = argparse.ArgumentParser(description='Generate model image')
@@ -45,7 +44,8 @@ def create_parser():
     parser.add_argument('pixelsize', type=float,
                         help='Pixel size /mas')
     parser.add_argument('-mt', '--modeltype', default='blank',
-                        choices=['blank', 'dirac', 'uniform', 'gaussian', 'ld'],
+                        choices=['blank', 'dirac', 'uniform', 'gaussian',
+                                 'ld'],
                         help='Image model type')
     parser.add_argument('-mw', '--modelwidth', type=float, default=10.0,
                         help='Initial image model width /mas')
