@@ -41,13 +41,11 @@ class ImgenTestCase(unittest.TestCase):
                                        str(naxis1), str(pixelsize)])
         generate(args)
         with fits.open(self.tempResult.name) as hdulist:
-            imageHdu = hdulist[0]
-            self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
-            self.assertEqual(imageHdu.header['NAXIS2'], naxis1)
-            self.assertAlmostEqual(imageHdu.header['CDELT1'],
-                                   pixelsize * MAS_TO_DEG)
-            self.assertAlmostEqual(imageHdu.header['CDELT2'],
-                                   pixelsize * MAS_TO_DEG)
+            hdr = hdulist[0].header
+            self.assertEqual(hdr['NAXIS1'], naxis1)
+            self.assertEqual(hdr['NAXIS2'], naxis1)
+            self.assertAlmostEqual(hdr['CDELT1'], pixelsize * MAS_TO_DEG)
+            self.assertAlmostEqual(hdr['CDELT2'], pixelsize * MAS_TO_DEG)
 
     def test_ld(self):
         """Test Hestroffer limb-darkened disk"""

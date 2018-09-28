@@ -58,14 +58,12 @@ class ImageOiToolTestCase(unittest.TestCase):
         with fits.open(self.tempResult.name) as hdulist:
             hdulist.__class__ = HDUListPlus
             param = hdulist[INPUT_PARAM_NAME].header
-            imageHdu = hdulist[param['INIT_IMG']]
+            hdr = hdulist[param['INIT_IMG']].header
             self.assertEqual(param['NAXIS'], 2)
-            self.assertEqual(imageHdu.header['NAXIS1'], naxis1)
-            self.assertEqual(imageHdu.header['NAXIS2'], naxis1)
-            self.assertAlmostEqual(imageHdu.header['CDELT1'],
-                                   pixelsize * MAS_TO_DEG)
-            self.assertAlmostEqual(imageHdu.header['CDELT2'],
-                                   pixelsize * MAS_TO_DEG)
+            self.assertEqual(hdr['NAXIS1'], naxis1)
+            self.assertEqual(hdr['NAXIS2'], naxis1)
+            self.assertAlmostEqual(hdr['CDELT1'], pixelsize * MAS_TO_DEG)
+            self.assertAlmostEqual(hdr['CDELT2'], pixelsize * MAS_TO_DEG)
             for key, value in DEFAULT_PARAM:
                 self.assertIsNotNone(param[key])
             self.assertEqual(param['MAXITER'], 50)
@@ -74,15 +72,15 @@ class ImageOiToolTestCase(unittest.TestCase):
         """Test initial image copy from primary HDU"""
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
-        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
+        tempimage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
                                                 delete=False)
         pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
-        pri.writeto(tempImage)
+        pri.writeto(tempimage)
         args = self.parser.parse_args(['copyinit', self.tempResult.name,
-                                       tempImage.name])
+                                       tempimage.name])
         args.func(args)
-        tempImage.close()
-        os.remove(tempImage.name)
+        tempimage.close()
+        os.remove(tempimage.name)
 
         # Test destination image
         with fits.open(self.tempResult.name) as hdulist:
@@ -95,15 +93,15 @@ class ImageOiToolTestCase(unittest.TestCase):
         """Test prior image copy from primary HDU"""
         naxis1 = 128
         self.create(self.tempResult.name, naxis1)
-        tempImage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
+        tempimage = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
                                                 delete=False)
         pri = fits.PrimaryHDU(data=np.ones((naxis1, naxis1)))
-        pri.writeto(tempImage)
+        pri.writeto(tempimage)
         args = self.parser.parse_args(['copyprior', self.tempResult.name,
-                                       tempImage.name])
+                                       tempimage.name])
         args.func(args)
-        tempImage.close()
-        os.remove(tempImage.name)
+        tempimage.close()
+        os.remove(tempimage.name)
 
         # Test destination image
         with fits.open(self.tempResult.name) as hdulist:
