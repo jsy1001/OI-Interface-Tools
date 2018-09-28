@@ -421,10 +421,6 @@ class GreyImg(object):
         >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_hestroffer_disk(12.0, 37.0, 0.5, 11, 0.5)
-        >>> np.all(np.argmax(img.image, axis=1) == 12)
-        True
-        >>> np.all(np.argmax(img.image, axis=0) == 37)
-        True
         >>> img.add_hestroffer_disk(13.5, 42.8, 0.25, 11, 2.2)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
         True
