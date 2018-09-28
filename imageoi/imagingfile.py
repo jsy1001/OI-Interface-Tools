@@ -146,7 +146,6 @@ class ImagingFile(object):
       priorimg (GreyImg or None): Prior image object.
 
     Examples:
-
       The following creates an input file object from OIFITS data.
 
       >>> import os.path

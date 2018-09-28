@@ -267,7 +267,6 @@ class GreyImg(object):
         """Create a new fits.ImageHDU instance from the current image.
 
         Examples:
-
           The following uses this method to create a FITS file
           containing two HDUs, a dummy primary HDU and a 64 by 64
           image HDU:
