@@ -7,8 +7,8 @@ import os.path
 from astropy.io import fits
 
 from imageoi import __version__
-from imageoi.ImagingFile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
-from imageoi.GreyImg import GreyImg
+from imageoi.imagingfile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
+from imageoi.initimage import GreyImg
 
 
 def create(args):

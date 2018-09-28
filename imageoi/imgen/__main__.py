@@ -5,8 +5,8 @@ import sys
 import os.path
 
 from imageoi import __version__
-from imageoi.ImagingFile import INIT_IMG_NAME
-from imageoi.GreyImg import GreyImg
+from imageoi.imagingfile import INIT_IMG_NAME
+from imageoi.initimage import GreyImg
 
 
 def generate(args):

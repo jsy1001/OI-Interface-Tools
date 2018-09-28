@@ -4,7 +4,7 @@ import tempfile
 
 from astropy.io import fits
 
-from imageoi.GreyImg import MAS_TO_DEG
+from imageoi.initimage import MAS_TO_DEG
 from imageoi.imgen.__main__ import create_parser, generate
 
 

@@ -16,7 +16,7 @@ import numpy as np
 from astropy.io import fits
 from astropy import wcs
 
-from imageoi.HDUListPlus import HDUListPlus
+from imageoi.fitshelpers import HDUListPlus
 
 MAS_TO_DEG = 1/3600/1000
 INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
@@ -49,7 +49,7 @@ class GreyImg(object):
       The following creates a blank 64 by 32 image:
 
       >>> import numpy as np
-      >>> from imageoi.GreyImg import GreyImg
+      >>> from imageoi.initimage import GreyImg
       >>> img = GreyImg('test', 64, 32, 0.25)
       >>> assert repr(img).startswith('GreyImg(')
       >>> img.name
@@ -169,7 +169,7 @@ class GreyImg(object):
         Example:
 
         >>> from astropy.io import fits
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.setwcs(ctype=['RA', 'DEC'])
         >>> img.make_primary_hdu().writeto('utest.fits', overwrite=True)
@@ -204,7 +204,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.image = np.zeros((64, 64))
 
@@ -239,7 +239,7 @@ class GreyImg(object):
           The following uses this method to create a FITS image file:
 
           >>> from astropy.io import fits
-          >>> from imageoi.GreyImg import GreyImg
+          >>> from imageoi.initimage import GreyImg
           >>> img = GreyImg('test', 64, 64, 0.25)
           >>> img.make_primary_hdu().writeto('utest.fits', overwrite=True)
           >>> hdulist = fits.open('utest.fits')
@@ -274,7 +274,7 @@ class GreyImg(object):
 
           >>> import numpy as np
           >>> from astropy.io import fits
-          >>> from imageoi.GreyImg import GreyImg
+          >>> from imageoi.initimage import GreyImg
           >>> img = GreyImg('test', 64, 64, 0.25)
           >>> hdulist = fits.HDUList(fits.PrimaryHDU())
           >>> hdulist.append(img.make_image_hdu())
@@ -304,7 +304,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_gaussian(12.0, 37.0, 0.5, 40)
         >>> img.normalise()
@@ -327,7 +327,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_dirac(12.0, 37.0, 0.5)
         >>> max1 = np.zeros((64,))
@@ -357,7 +357,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_uniform_disk(12.0, 37.0, 0.5, 11)
         >>> img.add_uniform_disk(13.5, 42.8, 0.25, 11)
@@ -385,7 +385,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_gaussian(12.0, 37.0, 0.5, 5)
         >>> np.all(np.argmax(img.image, axis=1) == 12)
@@ -418,7 +418,7 @@ class GreyImg(object):
         Example:
 
         >>> import numpy as np
-        >>> from imageoi.GreyImg import GreyImg
+        >>> from imageoi.initimage import GreyImg
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_hestroffer_disk(12.0, 37.0, 0.5, 11, 0.5)
         >>> np.all(np.argmax(img.image, axis=1) == 12)

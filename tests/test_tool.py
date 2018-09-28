@@ -5,9 +5,9 @@ import tempfile
 import numpy as np
 from astropy.io import fits
 
-from imageoi.HDUListPlus import HDUListPlus
-from imageoi.GreyImg import MAS_TO_DEG
-from imageoi.ImagingFile import DEFAULT_PARAM, INPUT_PARAM_NAME
+from imageoi.fitshelpers import HDUListPlus
+from imageoi.initimage import MAS_TO_DEG
+from imageoi.imagingfile import DEFAULT_PARAM, INPUT_PARAM_NAME
 from imageoi.tool.__main__ import create_parser
 
 

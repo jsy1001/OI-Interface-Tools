@@ -16,7 +16,7 @@ Attributes:
 
 from astropy.io import fits
 
-from imageoi.GreyImg import GreyImg
+from imageoi.initimage import GreyImg
 
 INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
 PRIOR_IMG_NAME = 'IMAGE-OI PRIOR IMAGE'
@@ -64,7 +64,7 @@ def mergeheaders(headers):
       The following merges two headers:
 
       >>> from astropy.io import fits
-      >>> from imageoi.ImagingFile import INIT_IMG_NAME, mergeheaders
+      >>> from imageoi.imagingfile import INIT_IMG_NAME, mergeheaders
       >>> a = fits.Header()
       >>> a['TELESCOP'] = 'CHARA'
       >>> a['HISTORY'] = 'a first history line'
@@ -150,7 +150,7 @@ class ImagingFile(object):
       The following creates an input file object from OIFITS data.
 
       >>> import os.path
-      >>> from imageoi.ImagingFile import ImagingFile
+      >>> from imageoi.imagingfile import ImagingFile
       >>> filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
       ...                         '..', 'tests', 'Bin_Ary--MIRC_H.fits')
       >>> inp = ImagingFile(filename)
@@ -162,7 +162,7 @@ class ImagingFile(object):
 
       The following creates an imaging file object from an existing file:
 
-      >>> from imageoi.ImagingFile import ImagingFile
+      >>> from imageoi.imagingfile import ImagingFile
       >>> exists = ImagingFile()
       >>> exists.writeto('utest2.fits', True)
       >>> inp = ImagingFile.fromfilename('utest2.fits')
@@ -175,8 +175,8 @@ class ImagingFile(object):
       The following sets the initial image:
 
       >>> from astropy.io import fits
-      >>> from imageoi.GreyImg import GreyImg
-      >>> from imageoi.ImagingFile import ImagingFile, INIT_IMG_NAME
+      >>> from imageoi.initimage import GreyImg
+      >>> from imageoi.imagingfile import ImagingFile, INIT_IMG_NAME
       >>> inp = ImagingFile()
       >>> inp.initimg = GreyImg(INIT_IMG_NAME, 64, 64, 0.25)
       >>> assert inp.priorimg is None
@@ -194,8 +194,8 @@ class ImagingFile(object):
       input parameters:
 
       >>> from astropy.io import fits
-      >>> from imageoi.GreyImg import GreyImg
-      >>> from imageoi.ImagingFile import ImagingFile, PRIOR_IMG_NAME
+      >>> from imageoi.initimage import GreyImg
+      >>> from imageoi.imagingfile import ImagingFile, PRIOR_IMG_NAME
       >>> inp = ImagingFile()
       >>> inp.priorimg = GreyImg(PRIOR_IMG_NAME, 64, 64, 0.25)
       >>> assert inp.inparam['RGL_PRIO'] == PRIOR_IMG_NAME
