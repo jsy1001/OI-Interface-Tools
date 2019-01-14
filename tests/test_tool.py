@@ -37,9 +37,7 @@ class ImageOiToolTestCase(unittest.TestCase):
             self.assertEqual(cm.exception.code, 0)
 
     def test_create_exists(self):
-        """
-        File exists and --overwrite not specified, should fail with SystemExit
-        """
+        """File exists without --overwrite, should fail with SystemExit"""
         args = self.parser.parse_args(['create',
                                        self.datafile, self.tempResult.name,
                                        '128', '0.5'])

@@ -1,4 +1,8 @@
-from pbr.version import VersionInfo
+"""The imageoi package."""
 
-_v = VersionInfo('OI-Interface-Tools').semantic_version()
-__version__ = _v.release_string()
+from pkg_resources import get_distribution, DistributionNotFound
+try:
+    __version__ = get_distribution('OI-Interface-Tools').version
+except DistributionNotFound:
+    # package is not installed
+    pass

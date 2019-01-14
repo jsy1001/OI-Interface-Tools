@@ -26,9 +26,7 @@ class ImgenTestCase(unittest.TestCase):
             self.assertEqual(cm.exception.code, 0)
 
     def test_generate_exists(self):
-        """
-        File exists and --overwrite not specified, should fail with SystemExit
-        """
+        """File exists without --overwrite, should fail with SystemExit"""
         args = self.parser.parse_args([self.tempResult.name, '128', '0.5'])
         with self.assertRaises(SystemExit):
             generate(args)
