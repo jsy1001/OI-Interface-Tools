@@ -9,20 +9,20 @@ from imageoi.fitshelpers import HDUListPlus
 
 
 class HDUListPlusTestCase(unittest.TestCase):
-
     def setUp(self):
-        self.tempFits = tempfile.NamedTemporaryFile(suffix='.fits', mode='wb',
-                                                    delete=False)
+        self.tempFits = tempfile.NamedTemporaryFile(
+            suffix=".fits", mode="wb", delete=False
+        )
         pri = fits.PrimaryHDU(data=np.zeros((64, 64)))
         ext = fits.BinTableHDU()
-        self.extname = 'test_extname'
+        self.extname = "test_extname"
         self.extver = 2
-        self.hduname = 'test_hduname'
+        self.hduname = "test_hduname"
         self.hduver = 2
-        ext.header['EXTNAME'] = self.extname
-        ext.header['EXTVER'] = self.extver
-        ext.header['HDUNAME'] = self.hduname
-        ext.header['HDUVER'] = self.hduver
+        ext.header["EXTNAME"] = self.extname
+        ext.header["EXTVER"] = self.extver
+        ext.header["HDUNAME"] = self.hduname
+        ext.header["HDUVER"] = self.hduver
         hdulist = fits.HDUList([pri, ext])
         hdulist.writeto(self.tempFits)
 
@@ -42,7 +42,7 @@ class HDUListPlusTestCase(unittest.TestCase):
         with fits.open(self.tempFits.name) as hdulist:
             hdulist.__class__ = HDUListPlus
             with self.assertRaises(KeyError):
-                hdulist['notpresent']
+                hdulist["notpresent"]
 
     def test_lookup_pos(self):
         """Test HDU lookup by position"""
@@ -75,5 +75,5 @@ class HDUListPlusTestCase(unittest.TestCase):
             hdulist[self.hduname, self.hduver]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

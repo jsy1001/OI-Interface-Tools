@@ -18,32 +18,54 @@ from astropy.io import fits
 
 from imageoi.initimage import GreyImg
 
-INIT_IMG_NAME = 'IMAGE-OI INITIAL IMAGE'
-PRIOR_IMG_NAME = 'IMAGE-OI PRIOR IMAGE'
-INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
-OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
-RESERVED_KEYWORDS = ['XTENSION', 'BITPIX', 'NAXIS', 'NAXIS1', 'NAXIS2',
-                     'PCOUNT', 'GCOUNT', 'TFIELDS',
-                     'EXTNAME', 'EXTVER', 'HDUNAME', 'HDUVER']
-DEFAULT_PARAM = [('TARGET', None), ('WAVE_MIN', 0.1e-6), ('WAVE_MAX', 50e-6),
-                 ('USE_VIS', 'ALL'), ('USE_VIS2', True), ('USE_T3', 'ALL'),
-                 ('MAXITER', 200), ('RGL_NAME', 'mem_prior'),
-                 ('AUTO_WGT', False), ('RGL_WGT', 1e5),
-                 ('FLUX', 1.0), ('FLUXERR', 0.0)]
-PARAM_COMMENTS = {'TARGET': 'Identifier of target to select',
-                  'WAVE_MIN': '[m] Minimum wavelength to select',
-                  'WAVE_MAX': '[m] Maximum wavelength to select',
-                  'USE_VIS': 'Complex visibility data to use if any',
-                  'USE_VIS2': 'Use squared visibility data if any',
-                  'USE_T3': 'Triple product data to use if any',
-                  'INIT_IMG': 'HDUNAME of initial image',
-                  'MAXITER': 'Maximum number of iterations to run',
-                  'RGL_NAME': 'Name of the regularization method',
-                  'AUTO_WGT': 'Automatic regularization weight',
-                  'RGL_WGT': 'Weight of the regularization',
-                  'RGL_PRIO': 'HDUNAME of prior image',
-                  'FLUX': 'Assumed total flux',
-                  'FLUXERR': 'Error bar for total flux'}
+INIT_IMG_NAME = "IMAGE-OI INITIAL IMAGE"
+PRIOR_IMG_NAME = "IMAGE-OI PRIOR IMAGE"
+INPUT_PARAM_NAME = "IMAGE-OI INPUT PARAM"
+OUTPUT_PARAM_NAME = "IMAGE-OI OUTPUT PARAM"
+RESERVED_KEYWORDS = [
+    "XTENSION",
+    "BITPIX",
+    "NAXIS",
+    "NAXIS1",
+    "NAXIS2",
+    "PCOUNT",
+    "GCOUNT",
+    "TFIELDS",
+    "EXTNAME",
+    "EXTVER",
+    "HDUNAME",
+    "HDUVER",
+]
+DEFAULT_PARAM = [
+    ("TARGET", None),
+    ("WAVE_MIN", 0.1e-6),
+    ("WAVE_MAX", 50e-6),
+    ("USE_VIS", "ALL"),
+    ("USE_VIS2", True),
+    ("USE_T3", "ALL"),
+    ("MAXITER", 200),
+    ("RGL_NAME", "mem_prior"),
+    ("AUTO_WGT", False),
+    ("RGL_WGT", 1e5),
+    ("FLUX", 1.0),
+    ("FLUXERR", 0.0),
+]
+PARAM_COMMENTS = {
+    "TARGET": "Identifier of target to select",
+    "WAVE_MIN": "[m] Minimum wavelength to select",
+    "WAVE_MAX": "[m] Maximum wavelength to select",
+    "USE_VIS": "Complex visibility data to use if any",
+    "USE_VIS2": "Use squared visibility data if any",
+    "USE_T3": "Triple product data to use if any",
+    "INIT_IMG": "HDUNAME of initial image",
+    "MAXITER": "Maximum number of iterations to run",
+    "RGL_NAME": "Name of the regularization method",
+    "AUTO_WGT": "Automatic regularization weight",
+    "RGL_WGT": "Weight of the regularization",
+    "RGL_PRIO": "HDUNAME of prior image",
+    "FLUX": "Assumed total flux",
+    "FLUXERR": "Error bar for total flux",
+}
 
 
 def mergeheaders(headers):
@@ -97,24 +119,26 @@ def mergeheaders(headers):
     ret = fits.Header()
     for hdr in headers:
         for key in hdr:
-            if key not in ['COMMENT', 'HISTORY']:
+            if key not in ["COMMENT", "HISTORY"]:
                 try:
                     current = ret[key]
                     if current != hdr[key]:
-                        raise ValueError("Cannot merge: non-identical " +
-                                         "values for '%s' keyword (%r, %r)" %
-                                         (key, current, hdr[key]))
+                        raise ValueError(
+                            "Cannot merge: non-identical "
+                            + "values for '%s' keyword (%r, %r)"
+                            % (key, current, hdr[key])
+                        )
                 except KeyError:
                     ret[key] = hdr[key]
 
         try:
-            for value in hdr['COMMENT']:
-                ret['COMMENT'] = value
+            for value in hdr["COMMENT"]:
+                ret["COMMENT"] = value
         except KeyError:
             pass  # no comments in hdr
         try:
-            for value in hdr['HISTORY']:
-                ret['HISTORY'] = value
+            for value in hdr["HISTORY"]:
+                ret["HISTORY"] = value
         except KeyError:
             pass  # no history in hdr
     return ret
@@ -125,9 +149,9 @@ def _reprheader(header):
         return repr(header)
     ret = "["
     for key in header:
-        if key not in ['COMMENT', 'HISTORY']:
+        if key not in ["COMMENT", "HISTORY"]:
             ret += "%s=%r, " % (key, header[key])
-    ret = ret.rstrip(' ,') + "]"
+    ret = ret.rstrip(" ,") + "]"
     return ret
 
 
@@ -212,7 +236,7 @@ class ImagingFile(object):
         self.dataheader = fits.Header()
         self.datatables = []
         self.inparam = fits.Header()
-        self.inparam['EXTNAME'] = INPUT_PARAM_NAME
+        self.inparam["EXTNAME"] = INPUT_PARAM_NAME
         for key, value in DEFAULT_PARAM:
             self.inparam[key] = value
         self.outparam = None
@@ -227,7 +251,7 @@ class ImagingFile(object):
                         self.dataheader.append(card)
                 # Copy OIFITS binary tables
                 for hdu in hdulist[1:]:
-                    if hdu.header['EXTNAME'].startswith('OI_'):
+                    if hdu.header["EXTNAME"].startswith("OI_"):
                         self.datatables.append(hdu.copy())
 
     @classmethod
@@ -246,7 +270,7 @@ class ImagingFile(object):
             except KeyError:
                 pass
             try:
-                self.priorimg = GreyImg.frominputfilename(filename, 'RGL_PRIO')
+                self.priorimg = GreyImg.frominputfilename(filename, "RGL_PRIO")
             except KeyError:
                 pass
         return self
@@ -264,7 +288,7 @@ class ImagingFile(object):
 
         """
         self._initimg = img
-        self.inparam['INIT_IMG'] = img.name
+        self.inparam["INIT_IMG"] = img.name
 
     @property
     def priorimg(self):
@@ -279,16 +303,19 @@ class ImagingFile(object):
 
         """
         self._priorimg = img
-        self.inparam['RGL_PRIO'] = img.name
+        self.inparam["RGL_PRIO"] = img.name
 
     def __repr__(self):
         ret = "ImagingFile("
-        ret += ("dataheader=%s, datatables=%r, " %
-                (_reprheader(self.dataheader), self.datatables))
-        ret += ("inparam=%s, outparam=%s, " %
-                (_reprheader(self.inparam), _reprheader(self.outparam)))
-        ret += ("initimg=%r, priorimg=%r" %
-                (self.initimg, self.priorimg))
+        ret += "dataheader=%s, datatables=%r, " % (
+            _reprheader(self.dataheader),
+            self.datatables,
+        )
+        ret += "inparam=%s, outparam=%s, " % (
+            _reprheader(self.inparam),
+            _reprheader(self.outparam),
+        )
+        ret += "initimg=%r, priorimg=%r" % (self.initimg, self.priorimg)
         ret += ")"
         return ret
 
@@ -309,7 +336,7 @@ class ImagingFile(object):
     def _set_param_comments(self):
         for key in self.inparam:
             try:
-                if self.inparam.comments[key] == '':
+                if self.inparam.comments[key] == "":
                     self.inparam.comments[key] = PARAM_COMMENTS[key]
             except KeyError:
                 pass
@@ -348,4 +375,5 @@ class ImagingFile(object):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

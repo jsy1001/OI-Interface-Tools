@@ -23,8 +23,8 @@ class HDUListPlus(fits.HDUList):
                 name = None
                 ver = None
                 try:
-                    name = hdu.header['HDUNAME']
-                    ver = hdu.header['HDUVER']
+                    name = hdu.header["HDUNAME"]
+                    ver = hdu.header["HDUVER"]
                 except KeyError:
                     pass
                 if name == index or (name, ver) == index:

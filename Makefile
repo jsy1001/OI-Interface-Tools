@@ -1,14 +1,25 @@
-requirements: requirements-dev.txt requirements.txt
+.PHONY: requirements update-deps install pip-tools touch
 
-install:
-	pip-sync requirements-dev.txt requirements.txt
+PREREQS = requirements-dev.in setup.py
+TARGETS = requirements-dev.txt requirements.txt
 
+requirements: pip-tools $(TARGETS)
+
+update-deps: pip-tools touch $(TARGETS)
+
+install: pip-tools $(TARGETS)
+	pip-sync $(TARGETS)
+	rm -rf .tox
+
+pip-tools:
+	pip install --upgrade pip-tools pip setuptools
+
+touch:
+	touch $(PREREQS)
 
 requirements-dev.txt: requirements-dev.in
-	pip-compile --output-file $@ $<
-
 requirements.txt: setup.py
-	pip-compile --output-file $@ $<
 
-
-.PHONY: requirements install
+$(TARGETS):
+	pip-compile --upgrade --build-isolation --output-file $@ $<
+	touch $@

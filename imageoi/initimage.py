@@ -18,9 +18,9 @@ from astropy import wcs
 
 from imageoi.fitshelpers import HDUListPlus
 
-MAS_TO_DEG = 1/3600/1000
-INPUT_PARAM_NAME = 'IMAGE-OI INPUT PARAM'
-OUTPUT_PARAM_NAME = 'IMAGE-OI OUTPUT PARAM'
+MAS_TO_DEG = 1 / 3600 / 1000
+INPUT_PARAM_NAME = "IMAGE-OI INPUT PARAM"
+OUTPUT_PARAM_NAME = "IMAGE-OI OUTPUT PARAM"
 
 
 class GreyImg(object):
@@ -78,12 +78,10 @@ class GreyImg(object):
         self.naxis2 = naxis2
         # note _image axes are slow, fast
         self._image = np.zeros((naxis2, naxis1), np.float)
-        if (wcsheader is not None and
-                wcsheader['CDELT1'] != pixelsize * MAS_TO_DEG):
+        if wcsheader is not None and wcsheader["CDELT1"] != pixelsize * MAS_TO_DEG:
             raise ValueError("CDELT1 inconsistent with pixelsize argument")
         self._wcs = wcs.WCS(header=wcsheader, naxis=2)
-        self._wcs.wcs.cdelt = [pixelsize * MAS_TO_DEG,
-                               pixelsize * MAS_TO_DEG]
+        self._wcs.wcs.cdelt = [pixelsize * MAS_TO_DEG, pixelsize * MAS_TO_DEG]
 
     @classmethod
     def _fromimagehdu(cls, imghdu):
@@ -97,23 +95,25 @@ class GreyImg(object):
           ValueError: Image does not have square pixels.
 
         """
-        name = imghdu.header['HDUNAME']
+        name = imghdu.header["HDUNAME"]
         naxis1 = imghdu.data.shape[1]
         naxis2 = imghdu.data.shape[0]
         try:
-            cdelt1 = imghdu.header['CDELT1']
-            cdelt2 = imghdu.header['CDELT2']
+            cdelt1 = imghdu.header["CDELT1"]
+            cdelt2 = imghdu.header["CDELT2"]
         except KeyError:
             raise KeyError("CDELT1/2 keywords missing, pixelsize unknown")
         if cdelt1 != cdelt2:
-            raise ValueError("Image pixels are not square " +
-                             "(CDELT1=%f, CDELT2=%f)" % (cdelt1, cdelt2))
+            raise ValueError(
+                "Image pixels are not square "
+                + "(CDELT1=%f, CDELT2=%f)" % (cdelt1, cdelt2)
+            )
         self = cls(name, naxis1, naxis2, cdelt1 / MAS_TO_DEG, imghdu.header)
         self.image = imghdu.data
         return self
 
     @classmethod
-    def frominputfilename(cls, filename, hdunamekey='INIT_IMG'):
+    def frominputfilename(cls, filename, hdunamekey="INIT_IMG"):
         """Initialise GreyImg from an image reconstruction input file.
 
         Args:
@@ -131,12 +131,14 @@ class GreyImg(object):
             param = hdulist[INPUT_PARAM_NAME].header
             imghdu = hdulist[param[hdunamekey]]
             if not isinstance(imghdu, (fits.PrimaryHDU, fits.ImageHDU)):
-                raise TypeError("Not an image HDU: '%s' referenced by %s" %
-                                (param[hdunamekey], hdunamekey))
+                raise TypeError(
+                    "Not an image HDU: '%s' referenced by %s"
+                    % (param[hdunamekey], hdunamekey)
+                )
             return cls._fromimagehdu(imghdu)
 
     @classmethod
-    def fromoutputfilename(cls, filename, hdunamekey='LAST_IMG'):
+    def fromoutputfilename(cls, filename, hdunamekey="LAST_IMG"):
         """Initialise GreyImg from an image reconstruction output file.
 
         Args:
@@ -154,8 +156,10 @@ class GreyImg(object):
             param = hdulist[OUTPUT_PARAM_NAME].header
             imghdu = hdulist[param[hdunamekey]]
             if not isinstance(imghdu, (fits.PrimaryHDU, fits.ImageHDU)):
-                raise TypeError("Not an image HDU: '%s' referenced by %s" %
-                                (param[hdunamekey], hdunamekey))
+                raise TypeError(
+                    "Not an image HDU: '%s' referenced by %s"
+                    % (param[hdunamekey], hdunamekey)
+                )
             return cls._fromimagehdu(imghdu)
 
     def setwcs(self, **kwargs):
@@ -210,9 +214,10 @@ class GreyImg(object):
 
         """
         if data.shape != self._image.shape:
-            raise ValueError("Shape doesn't match existing image dims: " +
-                             "expected %s but got %s" %
-                             (self._image.shape, data.shape))
+            raise ValueError(
+                "Shape doesn't match existing image dims: "
+                + "expected %s but got %s" % (self._image.shape, data.shape)
+            )
         self._image = np.array(data)
 
     @property
@@ -223,8 +228,12 @@ class GreyImg(object):
 
     def __repr__(self):
         ret = "GreyImg("
-        ret += ("name=%r, naxis1=%r, naxis2=%r, pixelsize=%r" %
-                (self.name, self.naxis1, self.naxis2, self.pixelsize))
+        ret += "name=%r, naxis1=%r, naxis2=%r, pixelsize=%r" % (
+            self.name,
+            self.naxis1,
+            self.naxis2,
+            self.pixelsize,
+        )
         ret += ")"
         return ret
 
@@ -259,7 +268,7 @@ class GreyImg(object):
 
         """
         hdu = fits.PrimaryHDU(data=self.image, header=self._wcs.to_header())
-        hdu.header['HDUNAME'] = self.name
+        hdu.header["HDUNAME"] = self.name
         # EXTNAME not allowed in primary header
         return hdu
 
@@ -293,8 +302,8 @@ class GreyImg(object):
 
         """
         hdu = fits.ImageHDU(data=self.image, header=self._wcs.to_header())
-        hdu.header['HDUNAME'] = self.name
-        hdu.header['EXTNAME'] = self.name
+        hdu.header["HDUNAME"] = self.name
+        hdu.header["EXTNAME"] = self.name
         return hdu
 
     def normalise(self):
@@ -368,7 +377,7 @@ class GreyImg(object):
         area = pi * radius**2
         for iy in range(self.naxis2):
             for ix in range(self.naxis1):
-                r = np.sqrt((ix - xpos)**2 + (iy - ypos)**2)
+                r = np.sqrt((ix - xpos) ** 2 + (iy - ypos) ** 2)
                 if r <= radius:
                     self.image[iy][ix] += flux / area
 
@@ -399,7 +408,7 @@ class GreyImg(object):
         peak = flux * 4 * log(2) / (pi * fwhm**2)
         for iy in range(self.naxis2):
             for ix in range(self.naxis1):
-                rsq = (ix - xpos)**2 + (iy - ypos)**2
+                rsq = (ix - xpos) ** 2 + (iy - ypos) ** 2
                 self.image[iy][ix] += peak * exp(-4 * log(2) * rsq / fwhm**2)
 
     def add_hestroffer_disk(self, xpos, ypos, flux, diameter, alpha):
@@ -425,16 +434,17 @@ class GreyImg(object):
         True
 
         """
-        peak = flux * (4 + 2*alpha) / (pi*diameter**2)
+        peak = flux * (4 + 2 * alpha) / (pi * diameter**2)
         radius = diameter / 2
         for iy in range(self.naxis2):
             for ix in range(self.naxis1):
-                r = np.sqrt((ix - xpos)**2 + (iy - ypos)**2)
+                r = np.sqrt((ix - xpos) ** 2 + (iy - ypos) ** 2)
                 if r <= radius:
-                    mu = np.sqrt(1.0 - (2.0*r/diameter)**2)
+                    mu = np.sqrt(1.0 - (2.0 * r / diameter) ** 2)
                     self.image[iy][ix] += peak * mu**alpha
 
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
