@@ -175,22 +175,22 @@ class ImagingFile(object):
       >>> import os.path
       >>> from imageoi.imagingfile import ImagingFile
       >>> filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-      ...                         '..', 'tests', 'Bin_Ary--MIRC_H.fits')
+      ...                         "..", "tests", "Bin_Ary--MIRC_H.fits")
       >>> inp = ImagingFile(filename)
       >>> len(inp.datatables)
       5
-      >>> inp.writeto('utest1.fits', True)
+      >>> inp.writeto("utest1.fits", True)
       >>> import os
-      >>> os.remove('utest1.fits')
+      >>> os.remove("utest1.fits")
 
       The following creates an imaging file object from an existing file:
 
       >>> from imageoi.imagingfile import ImagingFile
       >>> exists = ImagingFile()
-      >>> exists.writeto('utest2.fits', True)
-      >>> inp = ImagingFile.fromfilename('utest2.fits')
+      >>> exists.writeto("utest2.fits", True)
+      >>> inp = ImagingFile.fromfilename("utest2.fits")
       >>> import os
-      >>> os.remove('utest2.fits')
+      >>> os.remove("utest2.fits")
       >>> assert len(inp.datatables) == len(exists.datatables)
       >>> for key in exists.inparam:
       ...     assert inp.inparam[key] == exists.inparam[key]
@@ -203,13 +203,13 @@ class ImagingFile(object):
       >>> inp = ImagingFile()
       >>> inp.initimg = GreyImg(INIT_IMG_NAME, 64, 64, 0.25)
       >>> assert inp.priorimg is None
-      >>> assert inp.inparam['INIT_IMG'] == INIT_IMG_NAME
-      >>> inp.writeto('utest3.fits', True)
-      >>> with fits.open('utest3.fits') as hdulist:
+      >>> assert inp.inparam["INIT_IMG"] == INIT_IMG_NAME
+      >>> inp.writeto("utest3.fits", True)
+      >>> with fits.open("utest3.fits") as hdulist:
       ...     len(hdulist)
       2
       >>> import os
-      >>> os.remove('utest3.fits')
+      >>> os.remove("utest3.fits")
 
       The following sets the prior image. There should be 3 HDUs in
       the resulting FITS file: the empty primary HDU, an image HDU
@@ -221,13 +221,13 @@ class ImagingFile(object):
       >>> from imageoi.imagingfile import ImagingFile, PRIOR_IMG_NAME
       >>> inp = ImagingFile()
       >>> inp.priorimg = GreyImg(PRIOR_IMG_NAME, 64, 64, 0.25)
-      >>> assert inp.inparam['RGL_PRIO'] == PRIOR_IMG_NAME
-      >>> inp.writeto('utest4.fits', True)
-      >>> with fits.open('utest4.fits') as hdulist:
+      >>> assert inp.inparam["RGL_PRIO"] == PRIOR_IMG_NAME
+      >>> inp.writeto("utest4.fits", True)
+      >>> with fits.open("utest4.fits") as hdulist:
       ...     len(hdulist)
       3
       >>> import os
-      >>> os.remove('utest4.fits')
+      >>> os.remove("utest4.fits")
 
     """
 

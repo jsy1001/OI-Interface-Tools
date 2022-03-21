@@ -50,8 +50,8 @@ class GreyImg(object):
 
       >>> import numpy as np
       >>> from imageoi.initimage import GreyImg
-      >>> img = GreyImg('test', 64, 32, 0.25)
-      >>> assert repr(img).startswith('GreyImg(')
+      >>> img = GreyImg("test", 64, 32, 0.25)
+      >>> assert repr(img).startswith("GreyImg(")
       >>> img.name
       'test'
       >>> type(img.image) == np.ndarray
@@ -249,14 +249,14 @@ class GreyImg(object):
 
           >>> from astropy.io import fits
           >>> from imageoi.initimage import GreyImg
-          >>> img = GreyImg('test', 64, 64, 0.25)
-          >>> img.make_primary_hdu().writeto('utest.fits', overwrite=True)
-          >>> hdulist = fits.open('utest.fits')
+          >>> img = GreyImg("test", 64, 64, 0.25)
+          >>> img.make_primary_hdu().writeto("utest.fits", overwrite=True)
+          >>> hdulist = fits.open("utest.fits")
           >>> len(hdulist)
           1
-          >>> hdulist[0].header['HDUNAME']
+          >>> hdulist[0].header["HDUNAME"]
           'test'
-          >>> hdulist[0].header['EXTNAME']
+          >>> hdulist[0].header["EXTNAME"]
           Traceback (most recent call last):
               ...
           KeyError: "Keyword 'EXTNAME' not found."
@@ -264,7 +264,7 @@ class GreyImg(object):
           True
           >>> hdulist.close()
           >>> import os
-          >>> os.remove('utest.fits')
+          >>> os.remove("utest.fits")
 
         """
         hdu = fits.PrimaryHDU(data=self.image, header=self._wcs.to_header())
@@ -283,22 +283,22 @@ class GreyImg(object):
           >>> import numpy as np
           >>> from astropy.io import fits
           >>> from imageoi.initimage import GreyImg
-          >>> img = GreyImg('test', 64, 64, 0.25)
+          >>> img = GreyImg("test", 64, 64, 0.25)
           >>> hdulist = fits.HDUList(fits.PrimaryHDU())
           >>> hdulist.append(img.make_image_hdu())
-          >>> hdulist.writeto('utest.fits', overwrite=True)
-          >>> hdulist = fits.open('utest.fits')
+          >>> hdulist.writeto("utest.fits", overwrite=True)
+          >>> hdulist = fits.open("utest.fits")
           >>> len(hdulist)
           2
-          >>> hdulist[1].header['HDUNAME']
+          >>> hdulist[1].header["HDUNAME"]
           'test'
-          >>> hdulist[1].header['EXTNAME']
+          >>> hdulist[1].header["EXTNAME"]
           'test'
           >>> np.all(hdulist[1].data == img.image)
           True
           >>> hdulist.close()
           >>> import os
-          >>> os.remove('utest.fits')
+          >>> os.remove("utest.fits")
 
         """
         hdu = fits.ImageHDU(data=self.image, header=self._wcs.to_header())
