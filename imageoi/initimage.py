@@ -77,7 +77,7 @@ class GreyImg(object):
         self.naxis1 = naxis1
         self.naxis2 = naxis2
         # note _image axes are slow, fast
-        self._image = np.zeros((naxis2, naxis1), np.float)
+        self._image = np.zeros((naxis2, naxis1), float)
         if wcsheader is not None and wcsheader["CDELT1"] != pixelsize * MAS_TO_DEG:
             raise ValueError("CDELT1 inconsistent with pixelsize argument")
         self._wcs = wcs.WCS(header=wcsheader, naxis=2)
