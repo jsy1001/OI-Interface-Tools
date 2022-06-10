@@ -21,7 +21,7 @@ class ImagingFileTestCase(unittest.TestCase):
         with self.assertRaises(KeyError):
             inp.inparam["INIT_IMG"]
             inp.inparam["RGL_PRIO"]
-        self.assertIsInstance(inp.inparam["TARGET"], str)
+        self.assertIsNone(inp.inparam["TARGET"])
         self.assertIsInstance(inp.inparam["WAVE_MIN"], float)
         self.assertIsInstance(inp.inparam["WAVE_MAX"], float)
         self.assertIsInstance(inp.inparam["USE_VIS"], str)

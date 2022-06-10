@@ -78,7 +78,8 @@ class ImageOiToolTestCase(unittest.TestCase):
             self.assertAlmostEqual(hdr["CDELT1"], pixelsize * MAS_TO_DEG)
             self.assertAlmostEqual(hdr["CDELT2"], pixelsize * MAS_TO_DEG)
             for key, value in DEFAULT_PARAM:
-                self.assertIsNotNone(param[key])
+                if value is not None:
+                    self.assertIsNotNone(param[key])
             self.assertEqual(param["MAXITER"], 50)
 
     def test_copyinit(self):
