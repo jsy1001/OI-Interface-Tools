@@ -17,7 +17,7 @@ pip-tools:
 touch:
 	touch $(PREREQS)
 
-requirements-dev.txt: requirements-dev.in
+requirements-dev.txt: requirements-dev.in requirements.txt
 requirements.txt: setup.py
 
 $(TARGETS):

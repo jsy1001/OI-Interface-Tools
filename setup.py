@@ -24,9 +24,12 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     packages=find_packages(exclude=["tests"]),
-    install_requires=["numpy", "astropy>=1.3"],
+    install_requires=["numpy", "astropy"],
     entry_points={
         "console_scripts": [
             "image-oi-tool=imageoi.tool.__main__:main",

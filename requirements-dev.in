@@ -1,7 +1,3 @@
-setuptools_scm
+-c requirements.txt
 pip-tools
-flake8
-flake8-docstrings
-flake8-assertive
-pep8-naming
 black
