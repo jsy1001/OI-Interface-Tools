@@ -1,5 +1,6 @@
 # OI Interface Tools
 
+[![CI](https://github.com/jsy1001/OI-Interface-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/jsy1001/OI-Interface-Tools/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Software tools for managing input/output files for image reconstruction and model-fitting from optical interferometric data
