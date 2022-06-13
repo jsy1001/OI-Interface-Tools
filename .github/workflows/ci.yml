@@ -1,0 +1,48 @@
+name: CI
+
+on: [push]
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install Tox
+        run: pip install tox
+
+      - name: Lint with flake8
+        run: tox -e flake8
+
+  tests:
+
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.7, 3.8, 3.9]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: pip install tox
+
+      - name: Run tests
+        # Run tox using the version of Python in `PATH`
+        run: tox -e py

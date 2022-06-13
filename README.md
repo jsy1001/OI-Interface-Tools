@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/jsy1001/OI-Interface-Tools.png)](https://travis-ci.org/jsy1001/OI-Interface-Tools)
+# OI Interface Tools
 
-# OI-Interface-Tools
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Software tools for managing input/output files for image reconstruction and model-fitting from optical interferometric data
 
@@ -9,3 +9,9 @@ A standard interface to image reconstruction algorithms is being developed at ht
 Currently this repository contains several Python modules plus two scripts:
 - `image-oi-tool` creates, modifies, or lists parameters from image reconstruction input/output FITS files; and
 - `imgen` generates simple model images in FITS format.
+
+## Credits
+
+This package was created with
+[Cookiecutter](https://github.com/audreyr/cookiecutter) and the
+`harps3-cookiecutter-pyproject` project template.

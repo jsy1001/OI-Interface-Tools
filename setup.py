@@ -1,42 +1,55 @@
-"""Setup module for OI-Interface-Tools."""
+#!/usr/bin/env python
 
-from setuptools import setup, find_packages
-import os.path
+"""Setup script for OI Interface Tools."""
 
-here = os.path.abspath(os.path.dirname(__file__))
+from os import path
 
-# Get the long description from the README file
-with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+from setuptools import find_packages, setup
 
+
+here = path.abspath(path.dirname(__file__))
+with open(path.join(here, "README.md")) as readme_file:
+    readme = readme_file.read()
+
+requirements = ["numpy", "astropy"]
+
+setup_requirements = ["setuptools_scm"]
+
+test_requirements = []
 
 setup(
-    name="OI-Interface-Tools",
-    use_scm_version=True,
-    setup_requires=["setuptools_scm"],
-    description="Tools for managing OI image reconstruction input files",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/jsy1001/OI-Interface-Tools",
     author="John Young",
     author_email="jsy1001@cam.ac.uk",
+    python_requires=">=3.7",
     classifiers=[
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Natural Language :: English",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
+    description="Tools for managing OI image reconstruction input files",
+    install_requires=requirements,
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    include_package_data=True,
+    keywords="OI-Interface-Tools",
+    name="OI-Interface-Tools",
     packages=find_packages(exclude=["tests"]),
-    install_requires=["numpy", "astropy"],
     entry_points={
         "console_scripts": [
             "image-oi-tool=imageoi.tool.__main__:main",
             "imgen=imageoi.imgen.__main__:main",
         ],
     },
+    use_scm_version=True,
     project_urls={
         "Bug Reports": "https://github.com/jsy1001/OI-Interface-Tools/issues",
     },
+    setup_requires=setup_requirements,
+    test_suite="tests",
+    tests_require=test_requirements,
+    zip_safe=False,
 )
