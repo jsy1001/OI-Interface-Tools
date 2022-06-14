@@ -161,7 +161,7 @@ def create_parser():
         default=10.0,
         help="Initial image model width /mas",
     )
-    # :TODO: prior image (use GreyImg class)
+    # TODO: prior image (use GreyImg class)
     # Note dimensions and pixel size must match initial image
     parser_create.add_argument(
         "param",
@@ -192,7 +192,7 @@ def create_parser():
     parser_copyprior.set_defaults(func=copyprior)
 
     # Create parser for the "edit" command
-    # :TODO: "set" better?
+    # TODO: "set" better than "edit"?
     parser_edit = subparsers.add_parser("edit", help="edit existing input file")
     parser_edit.add_argument("inputfile", help="FITS file to modify")
     parser_edit.add_argument(

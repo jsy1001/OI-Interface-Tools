@@ -340,7 +340,7 @@ class ImagingFile(object):
                     self.inparam.comments[key] = PARAM_COMMENTS[key]
             except KeyError:
                 pass
-        # :TODO: set comments for output parameters
+        # TODO: set comments for output parameters
 
     def writeto(self, filename, overwrite=False):
         """Write object's data to file.
