@@ -42,7 +42,7 @@ class ImageOiToolTestCase(unittest.TestCase):
         """Test '--version' argument"""
         with self.assertRaises(SystemExit) as cm:
             self.parser.parse_args(["--version"])
-            self.assertEqual(cm.exception.code, 0)
+        self.assertEqual(cm.exception.code, 0)
 
     def test_create_exists(self):
         """File exists without --overwrite, should fail with SystemExit"""
