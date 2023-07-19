@@ -1,9 +1,9 @@
-import unittest
 import os
 import tempfile
+import unittest
 
-import numpy as np
 from astropy.io import fits
+import numpy as np
 
 from imageoi.fitshelpers import HDUListPlus
 

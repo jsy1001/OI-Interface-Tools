@@ -1,11 +1,11 @@
-import unittest
 import os
 import tempfile
+import unittest
 
 from astropy.io import fits
 
-from imageoi.initimage import MAS_TO_DEG
 from imageoi.imgen.__main__ import create_parser, generate
+from imageoi.initimage import MAS_TO_DEG
 
 
 class ImgenTestCase(unittest.TestCase):

@@ -1,8 +1,8 @@
 """Python script to generate simple model images."""
 
 import argparse
-import sys
 import os.path
+import sys
 
 from imageoi import __version__
 from imageoi.imagingfile import INIT_IMG_NAME

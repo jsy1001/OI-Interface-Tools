@@ -10,11 +10,11 @@ Attributes:
 
 """
 
-from math import pi, exp, log
+from math import exp, log, pi
 
-import numpy as np
-from astropy.io import fits
 from astropy import wcs
+from astropy.io import fits
+import numpy as np
 
 from imageoi.fitshelpers import HDUListPlus
 

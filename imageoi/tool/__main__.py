@@ -1,13 +1,13 @@
 """Python script to manage OI imaging input files."""
 
 import argparse
-import sys
 import os.path
+import sys
 
 from astropy.io import fits
 
 from imageoi import __version__
-from imageoi.imagingfile import ImagingFile, INIT_IMG_NAME, PRIOR_IMG_NAME
+from imageoi.imagingfile import INIT_IMG_NAME, ImagingFile, PRIOR_IMG_NAME
 from imageoi.initimage import GreyImg
 
 

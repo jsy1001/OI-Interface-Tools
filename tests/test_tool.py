@@ -1,13 +1,13 @@
-import unittest
 import os
 import tempfile
+import unittest
 
-import numpy as np
 from astropy.io import fits
+import numpy as np
 
 from imageoi.fitshelpers import HDUListPlus
-from imageoi.initimage import MAS_TO_DEG
 from imageoi.imagingfile import DEFAULT_PARAM, INPUT_PARAM_NAME
+from imageoi.initimage import MAS_TO_DEG
 from imageoi.tool.__main__ import create_parser
 
 

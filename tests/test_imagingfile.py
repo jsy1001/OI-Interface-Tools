@@ -1,6 +1,6 @@
 import unittest
 
-from imageoi.imagingfile import ImagingFile, INPUT_PARAM_NAME, DEFAULT_PARAM
+from imageoi.imagingfile import DEFAULT_PARAM, INPUT_PARAM_NAME, ImagingFile
 
 
 class ImagingFileTestCase(unittest.TestCase):
