@@ -1,4 +1,0 @@
-[run]
-source = imageoi
-# omit = */__init__.py
-command_line = -m unittest discover

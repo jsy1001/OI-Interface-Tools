@@ -1,6 +1,40 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OI-Interface-Tools"
+dynamic = ["version"]
+authors = [
+        {name = "John Young", email = "jsy1001@cam.ac.uk"},
+]
+description = "Tools for managing OI image reconstruction input files."
+readme = "README.md"
+requires-python = ">=3.7"
+# license = {text = ""}
+classifiers = [
+            "Development Status :: 4 - Beta",
+            "Intended Audience :: Developers",
+            "Natural Language :: English",
+            "Programming Language :: Python :: 3",
+]
+dependencies = [
+             "numpy",
+             "astropy",
+]
+
+[project.optional-dependencies]
+dev = ["pip-tools", "tox", "black"]
+
+[project.scripts]
+image-oi-tool = "imageoi.tool.__main__:main"
+imgen = "imageoi.imgen.__main__:main"
 
 [tool.setuptools_scm]
 
 [tool.black]
+
+[tool.coverage.run]
+source = ["imageoi"]
+# omit = ["*/__init__.py"]
+command_line = "-m unittest discover"
