@@ -12,15 +12,15 @@ install-dev: pip-tools $(TARGETS)
 	rm -rf .tox
 
 pip-tools:
-	pip install --upgrade pip-tools pip==23.1 setuptools
+	pip install --upgrade pip-tools pip setuptools
 
 touch:
 	touch $(PREREQS)
 
 requirements.txt: pyproject.toml
-	pip-compile --upgrade --build-isolation --resolver=backtracking --output-file=$@ $<
+	pip-compile --upgrade --build-isolation --resolver=backtracking --strip-extras --output-file=$@ $<
 	touch $@
 
 dev-requirements.txt: pyproject.toml
-	pip-compile --upgrade --build-isolation --resolver=backtracking --extra=dev --output-file=$@ $<
+	pip-compile --upgrade --build-isolation --resolver=backtracking --strip-extras --extra=dev --output-file=$@ $<
 	touch $@

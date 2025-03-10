@@ -1,12 +1,12 @@
 """Top-level package for OI Interface Tools."""
 
-from pkg_resources import DistributionNotFound, get_distribution
+from importlib.metadata import PackageNotFoundError, version
 
 __author__ = """John Young"""
 __email__ = "jsy1001@cam.ac.uk"
 
 try:
-    __version__ = get_distribution("OI-Interface-Tools").version
-except DistributionNotFound:
+    __version__ = version("OI-Interface-Tools")
+except PackageNotFoundError:
     # package is not installed
     pass

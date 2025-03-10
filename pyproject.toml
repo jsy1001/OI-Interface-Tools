@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Tools for managing OI image reconstruction input files."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 # license = {text = ""}
 classifiers = [
             "Development Status :: 4 - Beta",
