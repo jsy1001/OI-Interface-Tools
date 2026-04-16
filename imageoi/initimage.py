@@ -61,13 +61,13 @@ class GreyImg(object):
       >>> img.naxis2
       32
       >>> img.pixelsize
-      0.25
+      np.float64(0.25)
       >>> img.issquare()
       False
       >>> img.image.shape
       (32, 64)
       >>> np.all(img.image == 0.0)
-      True
+      np.True_
 
     """
 
@@ -261,7 +261,7 @@ class GreyImg(object):
               ...
           KeyError: "Keyword 'EXTNAME' not found."
           >>> np.all(hdulist[0].data == img.image)
-          True
+          np.True_
           >>> hdulist.close()
           >>> import os
           >>> os.remove("utest.fits")
@@ -295,7 +295,7 @@ class GreyImg(object):
           >>> hdulist[1].header["EXTNAME"]
           'test'
           >>> np.all(hdulist[1].data == img.image)
-          True
+          np.True_
           >>> hdulist.close()
           >>> import os
           >>> os.remove("utest.fits")
@@ -317,7 +317,7 @@ class GreyImg(object):
         >>> img.add_gaussian(12.0, 37.0, 0.5, 40)
         >>> img.normalise()
         >>> np.abs(np.sum(img.image) - 1.0) < 1e-6
-        True
+        np.True_
 
         """
         total = np.sum(self.image)
@@ -341,14 +341,14 @@ class GreyImg(object):
         >>> max1 = np.zeros((64,))
         >>> max1[37] = 12
         >>> np.all(np.argmax(img.image, axis=1) == max1)
-        True
+        np.True_
         >>> max0 = np.zeros((64,))
         >>> max0[12] = 37
         >>> np.all(np.argmax(img.image, axis=0) == max0)
-        True
+        np.True_
         >>> img.add_dirac(13.5, 42.8, 0.25)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-6
-        True
+        np.True_
 
         """
         self.image[int(np.rint(ypos))][int(np.rint(xpos))] += flux
@@ -370,7 +370,7 @@ class GreyImg(object):
         >>> img.add_uniform_disk(12.0, 37.0, 0.5, 11)
         >>> img.add_uniform_disk(13.5, 42.8, 0.25, 11)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
-        True
+        np.True_
 
         """
         radius = diameter / 2
@@ -397,12 +397,12 @@ class GreyImg(object):
         >>> img = GreyImg('test', 64, 64, 0.25)
         >>> img.add_gaussian(12.0, 37.0, 0.5, 5)
         >>> np.all(np.argmax(img.image, axis=1) == 12)
-        True
+        np.True_
         >>> np.all(np.argmax(img.image, axis=0) == 37)
-        True
+        np.True_
         >>> img.add_gaussian(11.2, 23.6, 0.25, 5)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-6
-        True
+        np.True_
 
         """
         peak = flux * 4 * log(2) / (pi * fwhm**2)
@@ -431,7 +431,7 @@ class GreyImg(object):
         >>> img.add_hestroffer_disk(12.0, 37.0, 0.5, 11, 0.5)
         >>> img.add_hestroffer_disk(13.5, 42.8, 0.25, 11, 2.2)
         >>> np.abs(np.sum(img.image) - 0.75) < 1e-2
-        True
+        np.True_
 
         """
         peak = flux * (4 + 2 * alpha) / (pi * diameter**2)

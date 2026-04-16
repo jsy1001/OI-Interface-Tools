@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
+requires = ["setuptools>=80", "setuptools-scm[simple]>=9.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Tools for managing OI image reconstruction input files."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 # license = {text = ""}
 classifiers = [
             "Development Status :: 4 - Beta",
@@ -29,8 +29,6 @@ dev = ["pip-tools", "tox", "black"]
 [project.scripts]
 image-oi-tool = "imageoi.tool.__main__:main"
 imgen = "imageoi.imgen.__main__:main"
-
-[tool.setuptools_scm]
 
 [tool.black]
 
