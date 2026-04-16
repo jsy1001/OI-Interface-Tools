@@ -17,7 +17,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install Tox
-        run: pip install tox
+        run: pip install tox tox-uv
 
       - name: Lint with flake8
         run: tox -e flake8
@@ -41,7 +41,7 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Install dependencies
-        run: pip install tox
+        run: pip install tox tox-uv
 
       - name: Run tests
         # Run tox using the version of Python in `PATH`

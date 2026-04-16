@@ -23,8 +23,8 @@ dependencies = [
              "astropy",
 ]
 
-[project.optional-dependencies]
-dev = ["pip-tools", "tox", "black"]
+[dependency-groups]
+dev = ["tox", "tox-uv", "black"]
 
 [project.scripts]
 image-oi-tool = "imageoi.tool.__main__:main"
