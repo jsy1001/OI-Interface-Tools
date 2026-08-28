@@ -5,32 +5,38 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "OI-Interface-Tools"
 dynamic = ["version"]
-authors = [
-        {name = "John Young", email = "jsy1001@cam.ac.uk"},
-]
+authors = [{ name = "John Young", email = "jsy1001@cam.ac.uk" }]
 description = "Tools for managing OI image reconstruction input files."
 readme = "README.md"
 requires-python = ">=3.11"
 # license = {text = ""}
 classifiers = [
-            "Development Status :: 4 - Beta",
-            "Intended Audience :: Developers",
-            "Natural Language :: English",
-            "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
 ]
-dependencies = [
-             "numpy",
-             "astropy",
-]
+dependencies = ["numpy", "astropy"]
 
 [dependency-groups]
-dev = ["tox", "tox-uv", "black"]
+dev = [
+    "tox",
+    "tox-uv",
+    "black",
+    "flake8",
+    "flake8-assertive",
+    "flake8-docstrings",
+    "flake8-alphabetize",
+    "pep8-naming",
+    "coverage[toml]",
+]
 
 [project.scripts]
 image-oi-tool = "imageoi.tool.__main__:main"
 imgen = "imageoi.imgen.__main__:main"
 
 [tool.black]
+fast = true
 
 [tool.coverage.run]
 source = ["imageoi"]

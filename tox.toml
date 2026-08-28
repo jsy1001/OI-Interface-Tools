@@ -1,0 +1,38 @@
+env_list = [
+    "flake8",
+    "clean",
+    "3.11",
+    "3.12",
+    "3.13",
+    "coverage-report",
+]
+
+[env_run_base]
+runner = "uv-venv-lock-runner"
+depends = ["clean"]
+dependency_groups = ["dev"]
+commands = [["coverage", "run", "--parallel-mode"]]
+
+[env.flake8]
+depends = []
+skip_install = true
+base_python = ["3.11"]
+commands = [["flake8", "imageoi", "tests"]]
+
+[env.mypy]
+depends = []
+skip_install = true
+base_python = ["3.11"]
+commands = [["mypy"]]
+
+[env.clean]
+depends = []
+skip_install = true
+commands = [["coverage", "erase"]]
+
+[env.coverage-report]
+depends = ["3.*"]
+skip_install = true
+base_python = ["3.11"]
+parallel_show_output = true
+commands = [["coverage", "combine"], ["coverage", "report", "--fail-under=85"]]
